@@ -1,4 +1,4 @@
-#V0 Start of collaboration : ERSOY-POKRYWA ESIEE Paris E3 FI
+# V0 Start of collaboration : ERSOY-POKRYWA ESIEE Paris E3 FI
 # Import packages
 from dash import Dash, html, dcc
 import dash_ag_grid as dag
