@@ -1,0 +1,3 @@
+'''
+Contenu du serveur web
+'''
