@@ -12,7 +12,7 @@ projet_folder_static = os.path.join(projet_folder_base, "static")
 
 def creation_serveur():
     srv_Flask = Flask(__name__, template_folder=projet_folder_templates, static_folder=projet_folder_static)
-    app_Dash = Dash(__name__, serveur=srv_Flask, url_base="/dash/", suppress_callback_exceptions=True)
+    #app_Dash = Dash(__name__, serveur=srv_Flask, url_base="/dash/", suppress_callback_exceptions=True)
 
     @srv_Flask.route('/')
     def index():
