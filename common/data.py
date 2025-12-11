@@ -4,8 +4,6 @@ Recuperer les données fetch si elles ou prendre les données dans le répertoir
 import pandas as pd
 import os
 
-
-
 def charger_les_data():
 
     projet_folder_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
