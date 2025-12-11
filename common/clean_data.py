@@ -25,11 +25,8 @@ def nettoyage_fichier():
         for fichier in os.listdir(dossier):
             os.remove(os.path.join(dossier, fichier))
 
-
 def initialiser_donnees():
     """ Télécharge les données puis les formatte et les mets dans le fichier clean
     """
     get_data.charger_donnees()
     Normaliser_ANMOIS()
-
-
