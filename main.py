@@ -1,7 +1,12 @@
-# V0 Start of collaboration : ERSOY-POKRYWA-HONODOU ESIEE Paris E3 FI
-#V1 Kadir ERSOY - Lucas POKRYWA - Valentin HONODOU : Creation de l'arborescence du projet
-#V2 Kadir ERSOY : Creation du serveur Flask + creation d'un header de page d'accueil (index.html)
-from common import server
+from common import server, api
+from app import dash_diagramme, dash_map
+
 
 if __name__ == "__main__":
-    server.creation_serveur()
+    srv_flask = server.creation_serveur()
+    dash_diagramme.creation_app_dash(srv_flask)
+    dash_map.creation_app_dash(srv_flask)
+
+   # api.get_data(srv_flask) #Activation de l'API (pour filtrage dynamique)
+
+    srv_flask.run(host='0.0.0.0', port=5000, debug=True)

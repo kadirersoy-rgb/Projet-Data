@@ -21,3 +21,77 @@ padding: 0 20px;
     font-size: 36px;
     color: whitesmoke;
 }
+
+.home
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 60px;
+}
+
+.home .titre_home
+{
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.home .btn_diagramme
+{
+    display: inline-block;
+    padding: 15px 40px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: white;
+    background-color: rgb(6, 131, 185);
+    text-decoration: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: 0.2s ease;
+    min-width: 150px;    
+    text-align: center; 
+}
+
+.home .btn_diagramme:hover
+{
+    transform: scale(1.05);
+}
+
+.home .btn_map
+{
+    display: inline-block;
+    padding: 15px 40px;
+    font-size: 15px;
+    color: white;
+    background-color: rgb(6, 131, 185);
+    text-decoration: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: 0.2s ease;
+    min-width: 150px;    
+    text-align: center; 
+}
+
+.home .btn_map:hover
+{
+    transform: scale(1.05);
+}
+
+.participants
+{
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    font-size: 1.5rem;
+    color: black;
+}
+
+.participants ul
+{
+    list-style-type: "- ";
+    margin: 0;
+    padding-left: 15px;
+}
