@@ -4,7 +4,8 @@ Recuperer les données fetch si elles ou prendre les données dans le répertoir
 import pandas as pd
 import os
 from typing import List
-
+import requests 
+import zipfile
 
 def charger_les_data(annees: List[str]) -> None:
     """Retourne un Dataframe de pandas des fichiers de data
@@ -39,3 +40,28 @@ def Normaliser_ANMOIS(DataFrames):
         df['ANMOIS'] = df['ANMOIS'].apply(lambda x: str(x)[:4]+ "-" + str(x)[4:]) 
         conversion[annees] = df
     return conversion
+
+def telecharger_fichier(chemin_fichier, url):
+    """ Téléchargement d'un fichier avec un url donné
+
+    Arguments:
+    chemin_fichier -- Chemin destination du fichier
+    url -- url du téléchargement du fichier
+    """
+    r = requests.get(url)
+    with open(chemin_fichier, "wb") as f:
+        f.write(r.content)
+
+def unzip_fichier(chemin_fichier, annees):
+    """  Unzip des fichiers, d'un dossier compressé, avec ses années données
+
+    chemin_fichier -- emplacement de l'archive
+    annees -- tableau de string d'années voulu
+    """
+    with zipfile.ZipFile(chemin_fichier, 'r') as zf:
+        for nom in zf.namelist():
+            for annee in annees:
+                if annee in nom:
+                    zf.extract(nom, "data")
+                    os.rename(f'data/{nom}', f'data/{annee}-data.csv')
+    os.remove(chemin_fichier)
