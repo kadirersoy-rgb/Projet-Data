@@ -1,0 +1,122 @@
+{
+    "MAYOTTE-MARCEL HENRY": "Mayotte",
+  
+    "LA REUNION-ROLAND GARROS": "La Réunion",
+    "ST-PIERRE-PIERREFONDS": "La Réunion",
+  
+    "ALBERT-BRAY": "Hauts-de-France",
+    "AGEN-LA GARENNE": "Nouvelle-Aquitaine",
+    "BORDEAUX-MERIGNAC": "Nouvelle-Aquitaine",
+    "BERGERAC-DORDOGNE-PERIGORD": "Nouvelle-Aquitaine",
+    "LA ROCHELLE-ILE DE RE": "Nouvelle-Aquitaine",
+    "POITIERS-BIARD": "Nouvelle-Aquitaine",
+    "LIMOGES-BELLEGARDE": "Nouvelle-Aquitaine",
+    "BRIVE-SOUILLAC": "Nouvelle-Aquitaine",
+    "PAU-PYRENEES": "Nouvelle-Aquitaine",
+    "BIARRITZ-PAYS-BASQUE": "Nouvelle-Aquitaine",
+  
+    "TOULOUSE-BLAGNAC": "Occitanie",
+    "TARBES-LOURDES-PYRENEES": "Occitanie",
+    "CASTRES-MAZAMET": "Occitanie",
+    "RODEZ-AVEYRON": "Occitanie",
+    "CARCASSONNE-SALVAZA": "Occitanie",
+    "PERPIGNAN-RIVESALTES": "Occitanie",
+    "MONTPELLIER-MEDITERRANEE": "Occitanie",
+    "BEZIERS-VIAS": "Occitanie",
+    "NIMES-GARONS": "Occitanie",
+  
+    "DOLE-TAVAUX": "Bourgogne-Franche-Comté",
+  
+    "METZ-NANCY-LORRAINE": "Grand Est",
+    "CHALONS-VATRY": "Grand Est",
+    "STRASBOURG-ENTZHEIM": "Grand Est",
+    "BALE-MULHOUSE": "Grand Est",
+  
+    "BASTIA-PORETTA": "Corse",
+    "CALVI-STE-CATHERINE": "Corse",
+    "FIGARI-SUD-CORSE": "Corse",
+    "AJACCIO-NAPOLEON-BONAPARTE": "Corse",
+  
+    "CHAMBERY-AIX-LES-BAINS": "Auvergne-Rhône-Alpes",
+    "CLERMONT-FERRAND-AUVERGNE": "Auvergne-Rhône-Alpes",
+    "COURCHEVEL": "Auvergne-Rhône-Alpes",
+    "LYON-ST-EXUPERY": "Auvergne-Rhône-Alpes",
+    "LYON-BRON": "Auvergne-Rhône-Alpes",
+    "GRENOBLE-ALPES-ISERE": "Auvergne-Rhône-Alpes",
+    "AURILLAC": "Auvergne-Rhône-Alpes",
+  
+    "CHATEAUROUX-DEOLS": "Centre-Val de Loire",
+    "TOURS-VAL DE LOIRE": "Centre-Val de Loire",
+  
+    "MARSEILLE-PROVENCE": "Provence-Alpes-Côte d'Azur",
+    "NICE-COTE D'AZUR": "Provence-Alpes-Côte d'Azur",
+    "TOULON-HYERES": "Provence-Alpes-Côte d'Azur",
+    "CANNES-MANDELIEU": "Provence-Alpes-Côte d'Azur",
+    "AVIGNON-CAUMONT": "Provence-Alpes-Côte d'Azur",
+  
+    "BEAUVAIS-TILLE": "Hauts-de-France",
+    "LILLE-LESQUIN": "Hauts-de-France",
+  
+    "PARIS-LE BOURGET": "Île-de-France",
+    "PARIS-CHARLES DE GAULLE": "Île-de-France",
+    "PARIS-ORLY": "Île-de-France",
+  
+    "BREST-BRETAGNE": "Bretagne",
+    "DINARD-PLEURTUIT-ST-MALO": "Bretagne",
+    "LORIENT-LANN-BIHOUE": "Bretagne",
+    "RENNES-ST-JACQUES": "Bretagne",
+    "QUIMPER-PLUGUFFAN": "Bretagne",
+  
+    "DEAUVILLE-NORMANDIE": "Normandie",
+    "CAEN-CARPIQUET": "Normandie",
+    "ROUEN-VALLEE DE SEINE": "Normandie",
+    "LE HAVRE-OCTEVILLE": "Normandie",
+  
+    "NANTES-ATLANTIQUE": "Pays de la Loire",
+    "ST-NAZAIRE-MONTOIR": "Pays de la Loire",
+    "LE MANS-ARNAGE": "Pays de la Loire",
+  
+    "ST-PIERRE-POINTE BLANCHE": "Saint-Pierre-et-Miquelon",
+  
+    "WALLIS-HIHIFO": "Wallis-et-Futuna",
+    "FUTUNA": "Wallis-et-Futuna",
+  
+    "TAHITI FAA'A": "Polynésie française",
+    "RURUTU": "Polynésie française",
+    "TUBUAI MATAURA": "Polynésie française",
+    "RAIVAVAE": "Polynésie française",
+    "TIKEHAU": "Polynésie française",
+    "FAKARAVA": "Polynésie française",
+    "NUKU HIVA": "Polynésie française",
+    "HIVA OA-ATUONA": "Polynésie française",
+    "BORA BORA": "Polynésie française",
+    "RANGIROA": "Polynésie française",
+    "HUAHINE": "Polynésie française",
+    "MOOREA": "Polynésie française",
+    "HAO": "Polynésie française",
+    "MAUPITI": "Polynésie française",
+    "RAIATEA": "Polynésie française",
+    "RIMATARA": "Polynésie française",
+    "ARUTUA": "Polynésie française",
+    "MAKEMO": "Polynésie française",
+    "AHE": "Polynésie française",
+    "TETIAROA": "Polynésie française",
+  
+    "ILE DES PINS": "Nouvelle-Calédonie",
+    "LIFOU": "Nouvelle-Calédonie",
+    "NOUMEA MAGENTA": "Nouvelle-Calédonie",
+    "MARE": "Nouvelle-Calédonie",
+    "OUVEA": "Nouvelle-Calédonie",
+    "NOUMEA LA TONTOUTA": "Nouvelle-Calédonie",
+    "KONE": "Nouvelle-Calédonie",
+  
+    "CAYENNE-FELIX EBOUE": "Guyane",
+    "MARIPASOULA": "Guyane",
+    "SAUL": "Guyane",
+  
+    "MARTINIQUE-AIME CESAIRE": "Martinique",
+    "POINTE-A-PITRE-LE RAIZET": "Guadeloupe",
+    "ST-MARTIN-GRAND-CASE": "Saint-Martin",
+    "ST-BARTHELEMY": "Saint-Barthélemy"
+  }
+  
