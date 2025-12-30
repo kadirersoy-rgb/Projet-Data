@@ -43,6 +43,7 @@ def nettoyage_fichier():
 def initialiser_donnees():
     """ Télécharge les données puis les formatte et les mets dans le fichier clean
     """
+    nettoyage_fichier()
     get_data.charger_donnees()
     Normaliser_ANMOIS()
     AjoutRegion()

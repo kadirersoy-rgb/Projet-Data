@@ -1,3 +1,9 @@
+/*
+    Styles CSS pour la page d'accueil
+*/
+
+
+/* Style pour l'en-tête */
 .header
 {
 background-color: rgb(6, 131, 185);
@@ -8,11 +14,13 @@ align-items: center;
 padding: 0 20px;
 }
 
+/* Style pour le logo dans l'en-tête */
 .header .logo
 {
     height: 60px;
 }
 
+/* Style pour le titre dans l'en-tête */
 .header .titre_header_accueil
 {
     flex: 1;
@@ -22,6 +30,7 @@ padding: 0 20px;
     color: whitesmoke;
 }
 
+/* Style pour le contenu de la page d'accueil */
 .home
 {
     display: flex;
@@ -31,6 +40,7 @@ padding: 0 20px;
     padding-top: 60px;
 }
 
+/* Style pour le titre principal de la page d'accueil */
 .home .titre_home
 {
     font-size: 2.5rem;
@@ -39,6 +49,7 @@ padding: 0 20px;
     margin-bottom: 30px;
 }
 
+/* Style pour le bouton "diagramme" de la page d'accueil */
 .home .btn_diagramme
 {
     display: inline-block;
@@ -55,11 +66,13 @@ padding: 0 20px;
     text-align: center; 
 }
 
+/* Effet au survol du bouton diagramme */
 .home .btn_diagramme:hover
 {
     transform: scale(1.05);
 }
 
+/* Style pour le bouton "map" de la page d'accueil */
 .home .btn_map
 {
     display: inline-block;
@@ -75,11 +88,13 @@ padding: 0 20px;
     text-align: center; 
 }
 
+/* Effet au survol du bouton map */
 .home .btn_map:hover
 {
     transform: scale(1.05);
 }
 
+/* Style pour la section des participants au projet */
 .participants
 {
     position: fixed;
@@ -89,6 +104,7 @@ padding: 0 20px;
     color: black;
 }
 
+/* Style pour la liste des participants */
 .participants ul
 {
     list-style-type: "- ";
