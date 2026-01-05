@@ -46,6 +46,5 @@ body {
 }
 
 .logo_lien {
-    position: absolute;
-    left: 20px;
+    position: absolute; 
 }

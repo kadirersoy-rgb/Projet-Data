@@ -49,11 +49,11 @@ def creation_app_dash(srv_Flask):
                     alt='ESIEE Paris Logo'
                 ),
                 href="/",
-                className="logo_lien",
-                target="_blank"  # optionnel
+                className="logo_lien"
             ),
             html.H1("Diagramme", className = "titre_header_diagramme")
         ],
+
         className = 'header'
     )
 
