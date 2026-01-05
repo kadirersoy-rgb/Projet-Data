@@ -2,27 +2,25 @@
     Styles CSS pour la page d'accueil
 */
 
-
-/* Style pour l'en-tête */
-.header
-{
-background-color: rgb(6, 131, 185);
-width: 100%;
-height: 80px;
-display: flex;
-align-items: center;
-padding: 0 20px;
+body {
+    margin: 0;
 }
 
-/* Style pour le logo dans l'en-tête */
-.header .logo
-{
+.header {
+    background-color: rgb(6, 131, 185);
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+}
+
+.header .logo {
     height: 60px;
+    margin-left: 20px;
+    position: absolute;
 }
 
-/* Style pour le titre dans l'en-tête */
-.header .titre_header_accueil
-{
+.header .titre_header_accueil {
     flex: 1;
     text-align: center;
     margin: 0;
@@ -30,9 +28,7 @@ padding: 0 20px;
     color: whitesmoke;
 }
 
-/* Style pour le contenu de la page d'accueil */
-.home
-{
+.home {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,18 +36,14 @@ padding: 0 20px;
     padding-top: 60px;
 }
 
-/* Style pour le titre principal de la page d'accueil */
-.home .titre_home
-{
+.home .titre_home {
     font-size: 2.5rem;
     font-weight: bold;
     text-align: center;
     margin-bottom: 30px;
 }
 
-/* Style pour le bouton "diagramme" de la page d'accueil */
-.home .btn_diagramme
-{
+.home .btn_diagramme {
     display: inline-block;
     padding: 15px 40px;
     margin-bottom: 10px;
@@ -62,19 +54,17 @@ padding: 0 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: 0.2s ease;
-    min-width: 150px;    
-    text-align: center; 
+    min-width: 150px;
+    text-align: center;
+    transform: scale(1.2);
 }
 
-/* Effet au survol du bouton diagramme */
-.home .btn_diagramme:hover
-{
-    transform: scale(1.05);
+.home .btn_diagramme:hover {
+    transform: scale(1.25);
 }
 
-/* Style pour le bouton "map" de la page d'accueil */
-.home .btn_map
-{
+.home .btn_map {
+    margin-top: 10px;
     display: inline-block;
     padding: 15px 40px;
     font-size: 15px;
@@ -84,30 +74,29 @@ padding: 0 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: 0.2s ease;
-    min-width: 150px;    
-    text-align: center; 
+    min-width: 150px;
+    text-align: center;
+    transform: scale(1.2);
 }
 
-/* Effet au survol du bouton map */
-.home .btn_map:hover
-{
-    transform: scale(1.05);
+.home .btn_map:hover {
+    transform: scale(1.25);
 }
 
-/* Style pour la section des participants au projet */
-.participants
-{
+.participants {
     position: fixed;
-    bottom: 40px;
-    left: 40px;
     font-size: 1.5rem;
     color: black;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+
+    background-color: rgb(6, 131, 185);
+
 }
 
-/* Style pour la liste des participants */
-.participants ul
-{
-    list-style-type: "- ";
+.participants ul {
+    list-style-type: "-";
     margin: 0;
     padding-left: 15px;
 }

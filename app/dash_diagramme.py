@@ -40,11 +40,22 @@ def creation_app_dash(srv_Flask):
     annees_disponibles = sorted(df_all["ANNEE"].unique()) #trier les années disponibles
     regions_disponibles = sorted(df_all["REGION"].unique()) #trier les régions disponibles
 
-    header = html.Div(className = 'header', #header de la page
-    children = [
-    html.Img(src='/static/images/ESIEE_Paris_logo.png', className='logo', alt='ESIEE Paris Logo'),
-    html.H1("Diagramme", className = "titre_header_diagramme")
-    ])
+    header = html.Div(
+        [
+            html.A(
+                html.Img(
+                    src='/static/images/ESIEE_Paris_logo.png',
+                    className='logo',
+                    alt='ESIEE Paris Logo'
+                ),
+                href="/",
+                className="logo_lien",
+                target="_blank"  # optionnel
+            ),
+            html.H1("Diagramme", className = "titre_header_diagramme")
+        ],
+        className = 'header'
+    )
 
     Dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
         children = [
@@ -160,11 +171,6 @@ def creation_app_dash(srv_Flask):
             labels={"APT_PAX_tr": "Passagers en transit"}
         )
 
-        # Personnalisation des graphiques : thème dark
-        fig_dep.update_layout(template="plotly_dark")
-        fig_arr.update_layout(template="plotly_dark")
-        fig_tr.update_layout(template="plotly_dark")
-
         # Personnalisation des couleurs des barres
         fig_dep.update_traces(marker_color="deepskyblue")
         fig_arr.update_traces(marker_color="darkgreen")
@@ -194,9 +200,6 @@ def creation_app_dash(srv_Flask):
             },
             title=f"Répartition des passagers - {region} en ({annee})"
         )
-
-        # Personnalisation du graphique : thème dark
-        fig_camembert.update_layout(template="plotly_dark")
 
         return fig_dep, fig_arr, fig_tr, fig_camembert # Retourner les figures
 
