@@ -14,24 +14,8 @@ def creation_app_dash(srv_Flask):
 
     Arguments:
     srv_Flask - le serveur Flask configuré
-
-    Variables:
-    df_all - DataFrame contenant toutes les données chargées
-    annees_disponibles - liste des années disponibles dans les données
-    regions_disponibles - liste des régions disponibles dans les données
-    header - en-tête de l'application Dash
-    Dropdown_annees - composant Dropdown pour sélectionner l'année
-    Dropdown_regions - composant Dropdown pour sélectionner la région
-    Diagramme_dep - composant Graph pour le diagramme des passagers au départ
-    Diagramme_arr - composant Graph pour le diagramme des passagers à l'arrivée
-    Diagramme_tr - composant Graph pour le diagramme des passagers en transit
-    Diagramme_camembert - composant Graph pour le diagramme en camembert des 3 types de passagers
-    app_Dash.layout - disposition de l'application Dash
-
-    Fonctions:
-    update_diagramme - fonction de rappel pour mettre à jour les diagrammes en fonction des sélections
-
     """
+    
     app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/diagramme/", suppress_callback_exceptions=True)
 
     df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021"])
@@ -118,23 +102,6 @@ def creation_app_dash(srv_Flask):
         fig_arr -- figure du diagramme des passagers à l'arrivée
         fig_tr -- figure du diagramme des passagers en transit
         fig_camembert -- figure du diagramme en camembert des 3 types de passagers
-        
-        Variables:
-        url - URL de l'API pour récupérer les données filtrées
-        resp - réponse de la requête API
-        data - données JSON récupérées de l'API
-        df_jsonified - DataFrame créé à partir des données JSON
-        df_groupe_depart - DataFrame regroupé pour les passagers au départ par mois de l'année sélectionnée
-        df_groupe_arrivee - DataFrame regroupé pour les passagers à l'arrivée par mois de l'année sélectionnée
-        df_groupe_transit - DataFrame regroupé pour les passagers en transit par mois de l'année sélectionnée
-        fig_dep - figure du diagramme des passagers au départ
-        fig_arr - figure du diagramme des passagers à l'arrivée
-        fig_tr - figure du diagramme des passagers en transit
-        total_dep - total des passagers au départ sur l'année sélectionnée
-        total_arr - total des passagers à l'arrivée sur l'année sélectionnée
-        total_tr - total des passagers en transit sur l'année sélectionnée
-        df_camembert - DataFrame pour le diagramme en camembert des 3 types de passagers
-        fig_camembert - figure du diagramme en camembert des 3 types de passagers
         
         """
         url = f"http://127.0.0.1:5000/api/data?year={annee}&region={region}"

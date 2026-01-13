@@ -2,14 +2,13 @@
 Prend les fichiers dans les data/raw, formatte les données puis les met dans data/clean
 '''
 
-import json, os, pandas as pd
+import json
+import os
+import pandas as pd
 from common import get_data
 
 def Normaliser_ANMOIS():
     """Normalise la colonne ANMOIS du Dataframe entrée en parametre
-    
-    Arguments:
-    DataFrames -- contient un dataframe de pandas
     """
     fichiers = [os.path.join("data/clean", f) for f in os.listdir("data/clean")]
     for fichier in fichiers:

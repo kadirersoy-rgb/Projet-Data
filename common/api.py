@@ -13,13 +13,6 @@ def api(srv_Flask):
 
     Returns:
     df_filtered_json - données JSON converties à partir du DataFrame filtré
-
-    Variables:
-    df_all - DataFrame contenant toutes les données chargées
-    annee - année sélectionnée dans les paramètres de l'API
-    region - région sélectionnée dans les paramètres de l'API
-    df_filtered - DataFrame filtré selon l'année et la région et converti en dictionnaire
-
     """
     df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021"])
     df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4] #extraire l'année de la colonne ANMOIS
