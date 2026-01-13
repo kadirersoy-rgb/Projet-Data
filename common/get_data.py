@@ -1,7 +1,9 @@
 '''
 Recuperer les données fetch si elles ou prendre les données dans le répertoires
 '''
-import os, requests, zipfile
+import os
+import requests
+import zipfile
 from common.scrapper import get_zip_link
 
 def telecharger_fichier():

@@ -1,7 +1,4 @@
-from dash import Dash, html, dcc, Input, Output
-import requests
-import plotly.express as px
-import pandas as pd
+from dash import Dash, html
 
 def creation_app_dash(srv_Flask):
     app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)

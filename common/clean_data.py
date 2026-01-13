@@ -2,7 +2,9 @@
 Prend les fichiers dans les data/raw, formatte les données puis les met dans data/clean
 '''
 
-import json, os, pandas as pd
+import json
+import os
+import pandas as pd
 from common import get_data
 
 def Normaliser_ANMOIS():
