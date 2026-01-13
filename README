@@ -1,0 +1,73 @@
+## Sommaire
+
+- [A propos](#a-propos)
+- [Installation](#installation)
+- [Utilisation](#utilisation)
+- [Documentation](#documentation)
+
+## A propos
+
+Projet Multidisciplinaire de visualisation de données n°1.
+
+## Installation
+
+Utiliser la commande suivante pour télécharger les dépendances nécéssaires.
+Veuillez bien avoir installé [Python](https://www.python.org/downloads/) ainsi que [PiP](https://pip.pypa.io/en/stable/) au préalable
+
+```bash
+pip install -r requirements.txt
+```
+
+## Utilisation
+
+Pour lancer le projet il suffit d'éxécuter la commande suivante :  
+
+```bash
+python3 main.py
+```
+
+## Documentation
+
+Arborescence du projet
+
+```bash
+.
+├── app
+│   ├── dash_diagramme.py
+│   └── dash_map.py
+├── common
+│   ├── api.py
+│   ├── clean_data.py
+│   ├── compare.py
+│   ├── get_data.py
+│   ├── map.py
+│   ├── scrapper.py
+│   ├── server.py
+│   ├── temporaire.py
+│   └── use_data.py
+├── data
+│   ├── clean
+│   │   └── 20**-data.csv
+│   └── raw
+│       └── 20**-data.csv
+├── data_info.png
+├── linter.sh
+├── main.py
+├── README
+├── region.json
+├── requirements.txt
+├── start.sh
+└── static
+    ├── css
+    │   ├── diagramme.css
+    │   └── index.css
+    ├── images
+    │   └── ESIEE_Paris_logo.png
+    └── templates
+        └── index.html
+```
+
+common -> Fonctions utiles au programme \
+data   -> Données en fichier CSV \
+static -> Fichier statiques pour le site \
+app    -> Fonctions pour dash 
