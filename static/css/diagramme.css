@@ -2,26 +2,31 @@
     Style pour la page "diagramme"
 */
 
-/* Style pour l'en-tête */
-.header
-{
-background-color: rgb(6, 131, 185);
-width: 100%;
-height: 80px;
-display: flex;
-align-items: center;
-padding: 0 20px;
+
+body {
+    margin: 0;
 }
 
-/* Style pour le logo dans l'en-tête */
-.header .logo
-{
+.header {
+    background-color: rgb(6, 131, 185);
+    width: 100%;
+    height: 80px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+
+.header h1{
+    margin: 0 auto;
+}
+
+.header .logo {
     height: 60px;
+    margin-left: 20px;
 }
 
-/* Style pour le titre dans l'en-tête */
-.header .titre_header_diagramme
-{
+.header .titre_header_diagramme {
     flex: 1;
     text-align: center;
     margin: 0;
@@ -29,16 +34,17 @@ padding: 0 20px;
     color: whitesmoke;
 }
 
-/* Style pour les dropdowns */
-.dropdown_annees, .dropdown_regions
-{
+.dropdown_annees,
+.dropdown_regions {
     display: inline-block;
     width: 48%;
     padding: 10px;
 }
 
-/* Style pour les graphiques */
-.graphe 
-{
+.graphe {
     border: 2px solid white;
+}
+
+.logo_lien {
+    position: absolute; 
 }
