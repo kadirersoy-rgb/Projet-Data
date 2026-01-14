@@ -1,49 +1,52 @@
-'''
+"""
 Module pour définir une API Flask permettant un filtrage dynamique des données
-'''
+"""
 
 from flask import jsonify, request
-import pandas as pd  # Ajout nécessaire pour pd.to_numeric
 from common import use_data
+import pandas as pd
 
 def api(srv_Flask):
-    """ Définition de l'API pour le filtrage dynamique des données """
-    
-    # Chargement unique au lancement
+    """ Définition de l'API pour le filtrage dynamique des données
+
+    Arguments:
+    srv_Flask - le serveur Flask configuré
+
+    Returns:
+    df_filtered_json - données JSON converties à partir du DataFrame filtré
+    """
+    # Chargement unique des données au démarrage
     df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021"])
-    df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4]
+    df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4] # Extraire l'année
 
-    # Pré-traitement des colonnes numériques (fait une seule fois ici pour optimiser)
-    df_all['APT_PAX_dep'] = pd.to_numeric(df_all['APT_PAX_dep'], errors='coerce').fillna(0)
-    df_all['APT_PAX_arr'] = pd.to_numeric(df_all['APT_PAX_arr'], errors='coerce').fillna(0)
-
-    @srv_Flask.route('/api/data')  
+    # Définir la route de l'API pour le filtrage des données
+    @srv_Flask.route('/api/data')
     def api_data():
+
+        # Récupération des paramètres
         annee = request.args.get('year', type=str)
-        region = request.args.get('region', type=str)
-        # 1. Récupération du type de passager (par défaut 'dep' si non spécifié)
-        type_pax = request.args.get('type_pax', type=str, default='APT_PAX_dep') 
+        region = request.args.get('region', type=str)      # Optionnel (pour le diagramme)
+        type_pax = request.args.get('type_pax', type=str)  # Optionnel (pour la map : APT_PAX_arr ou APT_PAX_dep)
 
-        # Filtrage par année
-        mask = (df_all["ANNEE"] == annee)
+        # J'utilse une copie pour ne pas modifier l'original
+        df_filtered = df_all.copy()
 
-        # Filtrage par région (optionnel)
+        # Filtrage par Année (Obligatoire)
+        if annee:
+            df_filtered = df_filtered[df_filtered["ANNEE"] == annee]
+
+        # Filtrage par Région
         if region:
-            mask = mask & (df_all["REGION"] == region)
+            df_filtered = df_filtered[df_filtered["REGION"] == region]
 
-        # Création d'une copie pour éviter les avertissements pandas
-        df_filtered = df_all[mask].copy()
+        # Gestion du Type de Flux de Passagers
+        if type_pax:
+            if type_pax in df_filtered.columns:
+                # Je renomme la colonne spécifique (ex: APT_PAX_dep) en "NB_PASSAGERS"
+                # Comme ça, Dash utilise toujours la même clé "NB_PASSAGERS"
+                df_filtered = df_filtered.rename(columns={type_pax: "NB_PASSAGERS"})
 
-        # 2. Filtrage "Logique" par colonne : 
-        # On crée une colonne générique 'NB_PASSAGERS' qui prend la valeur demandée.
-        # Cela simplifie le travail de Dash qui n'aura qu'à lire 'NB_PASSAGERS'.
-        if type_pax == 'APT_PAX_arr':
-            df_filtered['NB_PASSAGERS'] = df_filtered['APT_PAX_arr']
-        else:
-            df_filtered['NB_PASSAGERS'] = df_filtered['APT_PAX_dep']
-            
-        # On peut ne renvoyer que les colonnes utiles pour alléger le JSON
-        colonnes_a_garder = ['ANNEE', 'REGION', 'NB_PASSAGERS']
-        df_dict = df_filtered[colonnes_a_garder].to_dict(orient="records")
+        df_filtered_dict = df_filtered.to_dict(orient="records")
+        return jsonify(df_filtered_dict)
 
-        return jsonify(df_dict)
+    return df_all 

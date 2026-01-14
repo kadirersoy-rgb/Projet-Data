@@ -9,26 +9,25 @@ import numpy as np
 with open('common/regions.geojson', 'r') as f:
     geojson_france = json.load(f)
 
-# --- BORNES LOGARITHMIQUES FIXES ---
-LOG_MIN = 5.0   # 100k passagers
-LOG_MAX = 7.7   # ~50M passagers
+# Bornes pour l'échelle de couleur logarithmique
+# Pour une échelle de couleur cohérente entre les années et types de flux
+LOG_MIN = 5.0   # environ 100k passagers
+LOG_MAX = 7.7   # environ 50M passagers
 
 def creation_app_dash(srv_Flask):
     app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
 
     annees_disponibles = ["2018", "2019", "2020", "2021"]
 
-    # --- 1. CRÉATION DU HEADER (IDENTIQUE À DIAGRAMME.PY) ---
+    # --- HEADER ---
     header = html.Div(className='header',
         children=[
             html.Img(src='/static/images/ESIEE_Paris_logo.png', className='logo', alt='ESIEE Paris Logo'),
             html.H1("Carte Choroplèthe", className="titre_header_diagramme")
         ]
     )
-
-    # --- 2. CRÉATION DES DROPDOWNS AVEC LES CLASSES CSS EXISTANTES ---
     
-    # Dropdown Année (On réutilise la classe 'dropdown_annees' pour le style)
+    # Dropdown Années
     Dropdown_annees = html.Div(className="dropdown_annees",
         children=[
             html.Label("Sélectionner une année :"),
@@ -41,7 +40,7 @@ def creation_app_dash(srv_Flask):
         ]
     )
 
-    # Dropdown Type de flux (On réutilise la classe 'dropdown_regions' pour le style de positionnement)
+    # Dropdown Type de flux
     Dropdown_type = html.Div(className="dropdown_regions",
         children=[
             html.Label("Type de flux :"),
@@ -58,10 +57,9 @@ def creation_app_dash(srv_Flask):
         ]
     )
 
-    # --- 3. LAYOUT ---
+    # --- LAYOUT ---
     app_Dash.layout = html.Div([
-        # Note: Assurez-vous que map.css contient les règles de diagramme.css 
-        # ou pointez vers le même fichier css
+        # Fichier css du diagramme
         html.Link(rel="stylesheet", href="/static/css/diagramme.css"), 
         
         header,
@@ -79,7 +77,7 @@ def creation_app_dash(srv_Flask):
     )
     def update_map(annee, type_pax_choisi):
         
-        # LOGIQUE DE RÉCUPÉRATION DES DONNÉES
+        # Logique de récupération des données via l'API Flask
         try:
             if type_pax_choisi == 'ALL':
                 # Si "ALL", on fait 2 requêtes et on combine les résultats
@@ -122,12 +120,12 @@ def creation_app_dash(srv_Flask):
         # Filtre > 0
         df_grouped = df_grouped[df_grouped["NB_PASSAGERS"] > 0] 
 
-        # CALCUL DU LOG 
+        # Calcul du logarithme
         df_grouped["LOG_PAX"] = np.log10(df_grouped["NB_PASSAGERS"])
         # On clip pour éviter d'être hors bornes
         df_grouped["LOG_PAX"] = df_grouped["LOG_PAX"].clip(lower=LOG_MIN, upper=LOG_MAX)
 
-        # CRÉATION DE LA CARTE
+        # Création de la map choroplèthe
         fig = px.choropleth(
             df_grouped,
             geojson=geojson_france,
@@ -147,10 +145,9 @@ def creation_app_dash(srv_Flask):
         fig.update_geos(
             fitbounds="locations", 
             visible=False,
-            bgcolor="rgba(0,0,0,0)" # Fond de la carte transparent pour se fondre dans le thème dark
+            bgcolor="rgba(0,0,0,0)" # Fond de la carte transparent pour se fondre dans le thème
         )
 
-        # --- APPLICATION DU THEME DARK ---
         fig.update_layout(
             margin={"r":0,"t":50,"l":0,"b":0},
             paper_bgcolor="rgba(0,0,0,0)", # Fond transparent
