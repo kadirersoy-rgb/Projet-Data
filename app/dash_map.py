@@ -1,4 +1,18 @@
-from dash import Dash, html
+from dash import Dash, html, dcc, Input, Output
+import plotly.express as px
+import pandas as pd
+import json
+import requests
+import numpy as np
+
+# Chargement du GeoJSON
+with open('common/regions.geojson', 'r') as f:
+    geojson_france = json.load(f)
+
+# Bornes pour l'échelle de couleur logarithmique
+# Pour une échelle de couleur cohérente entre les années et types de flux
+LOG_MIN = 5.0   # environ 100k passagers
+LOG_MAX = 7.7   # environ 50M passagers
 
 def creation_app_dash(srv_Flask):
     app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
