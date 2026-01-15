@@ -9,7 +9,9 @@ import numpy as np
 with open('common/regions.geojson', 'r') as f:
     geojson_france = json.load(f)
 
-# Bornes pour l'échelle de couleur logarithmique
+DOM_TOM = ["La Réunion", "Guadeloupe", "Martinique", "Guyane", "Mayotte"]
+
+# Bornes constante pour l'échelle de couleur logarithmique
 # Pour une échelle de couleur cohérente entre les années et types de flux
 LOG_MIN = 5.0   # environ 100k passagers
 LOG_MAX = 7.7   # environ 50M passagers
@@ -20,14 +22,19 @@ def creation_app_dash(srv_Flask):
     annees_disponibles = ["2018", "2019", "2020", "2021"]
 
     # --- HEADER ---
-    header = html.Div(className='header',
-        children=[
-            html.Img(src='/static/images/ESIEE_Paris_logo.png', className='logo', alt='ESIEE Paris Logo'),
+    header = html.Div(
+        [
+            html.A(
+                html.Img(src='/static/images/ESIEE_Paris_logo.png', className='logo', alt='ESIEE Paris Logo'),
+                href="/",
+                className="logo_lien"
+            ),
             html.H1("Carte Choroplèthe", className="titre_header_diagramme")
-        ]
+        ],
+        className='header'
     )
     
-    # Dropdown Années
+    # --- FILTRES ---
     Dropdown_annees = html.Div(className="dropdown_annees",
         children=[
             html.Label("Sélectionner une année :"),
@@ -40,7 +47,6 @@ def creation_app_dash(srv_Flask):
         ]
     )
 
-    # Dropdown Type de flux
     Dropdown_type = html.Div(className="dropdown_regions",
         children=[
             html.Label("Type de flux :"),
@@ -59,99 +65,95 @@ def creation_app_dash(srv_Flask):
 
     # --- LAYOUT ---
     app_Dash.layout = html.Div([
-        # Fichier css du diagramme
         html.Link(rel="stylesheet", href="/static/css/diagramme.css"), 
-        
         header,
-        Dropdown_annees,
-        Dropdown_type,
+        html.Div([Dropdown_annees, Dropdown_type], style={'display': 'flex', 'gap': '20px', 'padding': '20px'}),
         
-        # Ajout de la classe graphe pour le style (marges etc.)
-        dcc.Graph(id="map_passagers", className="graphe", style={'height': '80vh'})
+        # Carte Métropole
+        html.Div([
+            html.H3("France Métropolitaine", style={'textAlign': 'center'}),
+            dcc.Graph(
+                id="map-metro", 
+                className="graphe", 
+                config={'scrollZoom': False, 'displayModeBar': False}, 
+                style={'height': '600px'}
+            )
+        ]),
+
+        html.Hr(style={'margin': '30px 0'}), 
+
+        # Cartes DOM-TOM
+        html.Div([
+            html.H3("Outre-mer", style={'textAlign': 'center'}),
+            html.Div(
+                id="map-dom-container", 
+                style={'display': 'flex', 'justify-content': 'center', 'flex-wrap': 'wrap', 'gap': '10px'}
+            )
+        ])
     ])
 
+    # --- CALLBACK ---
     @app_Dash.callback(
-        Output("map_passagers", "figure"),
-        Input("filter_year", "value"),
-        Input("filter_type_pax", "value")
+        [Output('map-metro', 'figure'),
+         Output('map-dom-container', 'children')],
+        [Input('filter_year', 'value'),
+         Input('filter_type_pax', 'value')]
     )
-    def update_map(annee, type_pax_choisi):
+    def update_maps(selected_year, selected_pax):
+        url = "http://127.0.0.1:5000/api/data"
+        params = {'year': selected_year, 'type_pax': selected_pax}
         
-        # Logique de récupération des données via l'API Flask
         try:
-            if type_pax_choisi == 'ALL':
-                # Si "ALL", on fait 2 requêtes et on combine les résultats
-                url_dep = f"http://127.0.0.1:5000/api/data?year={annee}&type_pax=APT_PAX_dep"
-                url_arr = f"http://127.0.0.1:5000/api/data?year={annee}&type_pax=APT_PAX_arr"
-                
-                r_dep = requests.get(url_dep)
-                r_arr = requests.get(url_arr)
-                
-                df_dep = pd.DataFrame(r_dep.json())
-                df_arr = pd.DataFrame(r_arr.json())
-                
-                # On concatène les deux DataFrames
-                df_filtered = pd.concat([df_dep, df_arr])
-                
-                titre_flux = "du Trafic Total"
-            else:
-                # Cas standard
-                api_url = f"http://127.0.0.1:5000/api/data?year={annee}&type_pax={type_pax_choisi}"
-                r = requests.get(api_url)
-                df_filtered = pd.DataFrame(r.json())
-                
-                titre_flux = "des Départs" if type_pax_choisi == "APT_PAX_dep" else "des Arrivées"
-
-            if df_filtered.empty: 
-                # Retourne une carte vide avec le thème dark
-                empty_fig = px.choropleth(title="Données vides")
-                empty_fig.update_layout(template="plotly_dark")
-                return empty_fig
-
+            response = requests.get(url, params=params)
+            data = response.json()
+            df = pd.DataFrame(data)
         except Exception as e:
-            print(f"Erreur: {e}")
-            err_fig = px.choropleth(title="Erreur API")
-            err_fig.update_layout(template="plotly_dark")
-            return err_fig
-
-        # AGRÉGATION
-        df_grouped = df_filtered.groupby("REGION")["NB_PASSAGERS"].sum().reset_index()
+            print(f"Erreur API: {e}")
+            return {}, [] 
         
-        # Filtre > 0
-        df_grouped = df_grouped[df_grouped["NB_PASSAGERS"] > 0] 
+        if df.empty:
+            return {}, []
+        
+        # 1. Préparation des données
+        df_map = df.groupby("REGION", as_index=False)["NB_PASSAGERS"].sum()
+        df_map = df_map[df_map["NB_PASSAGERS"] > 0]
+        
+        df_map["LOG_PAX"] = np.log10(df_map["NB_PASSAGERS"])
+        df_map["LOG_PAX"] = df_map["LOG_PAX"].clip(lower=LOG_MIN, upper=LOG_MAX)
+        
+        # Formatage des passagers pour le hover
+        # Exemple: 1234567 -> 1 234 567
+        df_map["PAX_FMT"] = df_map["NB_PASSAGERS"].apply(lambda x: "{:,}".format(int(x)).replace(",", " "))
 
-        # Calcul du logarithme
-        df_grouped["LOG_PAX"] = np.log10(df_grouped["NB_PASSAGERS"])
-        # On clip pour éviter d'être hors bornes
-        df_grouped["LOG_PAX"] = df_grouped["LOG_PAX"].clip(lower=LOG_MIN, upper=LOG_MAX)
+        # Séparation Métropole / DOM-TOM
+        df_metro = df_map[~df_map["REGION"].isin(DOM_TOM)]
 
-        # Création de la map choroplèthe
-        fig = px.choropleth(
-            df_grouped,
+        # --- CARTE MÉTROPOLE ---
+        fig_metro = px.choropleth(
+            df_metro,
             geojson=geojson_france,
             locations="REGION",
             featureidkey="properties.nom",
-            color="LOG_PAX", 
-            range_color=[LOG_MIN, LOG_MAX],
-            color_continuous_scale="Viridis", 
-            
-            hover_name="REGION",
-            hover_data={"NB_PASSAGERS": True, "LOG_PAX": False, "REGION": False},
-            
-            scope="europe",
-            title=f"Volume {titre_flux} en {annee} (Échelle Log)",
+            color="LOG_PAX",
+            range_color=[LOG_MIN, LOG_MAX], 
+            color_continuous_scale="Viridis",
+            # Choix des données dont on a besoin pour le survol
+            custom_data=["REGION", "PAX_FMT"] 
         )
 
-        fig.update_geos(
-            fitbounds="locations", 
-            visible=False,
-            bgcolor="rgba(0,0,0,0)" # Fond de la carte transparent pour se fondre dans le thème
+        # Format personnalisé pour le hover
+        # %{customdata[0]} -> REGION
+        # %{customdata[1]} -> PAX_FMT
+        # <extra></extra> -> Supprime la boîte "trace 0"
+        fig_metro.update_traces(
+            hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]} passagers<extra></extra>"
         )
 
-        fig.update_layout(
-            margin={"r":0,"t":50,"l":0,"b":0},
-            paper_bgcolor="rgba(0,0,0,0)", # Fond transparent
-            geo_bgcolor="rgba(0,0,0,0)",
+        fig_metro.update_geos(fitbounds="locations", visible=False)
+        fig_metro.update_layout(
+            dragmode=False, 
+            margin={"r":0,"t":0,"l":0,"b":0},
+            coloraxis_showscale=True,
             coloraxis_colorbar=dict(
                 title="Passagers",
                 tickvals=[3, 4, 5, 6, 7, 8], 
@@ -159,6 +161,46 @@ def creation_app_dash(srv_Flask):
             )
         )
 
-        return fig
+        # --- CARTES DOM-TOM ---
+        dom_figures = []
+        for region_name in DOM_TOM:
+            df_region = df_map[df_map["REGION"] == region_name]
+            
+            if df_region.empty:
+                continue
+                
+            fig_dom = px.choropleth(
+                df_region,
+                geojson=geojson_france,
+                locations="REGION",
+                featureidkey="properties.nom",
+                color="LOG_PAX",
+                range_color=[LOG_MIN, LOG_MAX], 
+                color_continuous_scale="Viridis",
+                custom_data=["REGION", "PAX_FMT"],
+                title=region_name
+            )
+            
+            fig_dom.update_traces(
+                hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]} passagers<extra></extra>"
+            )
+            
+            fig_dom.update_geos(fitbounds="locations", visible=False)
+            fig_dom.update_layout(
+                dragmode=False,
+                margin={"r":0,"t":30,"l":0,"b":0},
+                coloraxis_showscale=False, 
+                height=300, 
+                title_font_size=12
+            )
+            
+            dom_figures.append(
+                html.Div(
+                    dcc.Graph(figure=fig_dom, config={'scrollZoom': False, 'displayModeBar': False}), 
+                    style={'width': '250px', 'display': 'inline-block'}
+                )
+            )
+
+        return fig_metro, dom_figures
 
     return app_Dash

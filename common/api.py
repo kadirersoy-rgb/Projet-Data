@@ -4,7 +4,6 @@ Module pour définir une API Flask permettant un filtrage dynamique des données
 
 from flask import jsonify, request
 from common import use_data
-import pandas as pd
 
 def api(srv_Flask):
     """ Définition de l'API pour le filtrage dynamique des données
@@ -17,36 +16,39 @@ def api(srv_Flask):
     """
     # Chargement unique des données au démarrage
     df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021"])
-    df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4] # Extraire l'année
+    df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4]
 
-    # Définir la route de l'API pour le filtrage des données
+    # Définition de la route API
     @srv_Flask.route('/api/data')
     def api_data():
 
-        # Récupération des paramètres
+        # Récupération des paramètres de la requête
         annee = request.args.get('year', type=str)
-        region = request.args.get('region', type=str)      # Optionnel (pour le diagramme)
-        type_pax = request.args.get('type_pax', type=str)  # Optionnel (pour la map : APT_PAX_arr ou APT_PAX_dep)
+        region = request.args.get('region', type=str)
+        type_pax = request.args.get('type_pax', type=str)
 
-        # J'utilse une copie pour ne pas modifier l'original
+        # J'utilise une copie pour le filtrage sans modifier l'original
         df_filtered = df_all.copy()
 
-        # Filtrage par Année (Obligatoire)
+        # Filtrages
         if annee:
             df_filtered = df_filtered[df_filtered["ANNEE"] == annee]
-
-        # Filtrage par Région
         if region:
             df_filtered = df_filtered[df_filtered["REGION"] == region]
 
-        # Gestion du Type de Flux de Passagers
-        if type_pax:
-            if type_pax in df_filtered.columns:
-                # Je renomme la colonne spécifique (ex: APT_PAX_dep) en "NB_PASSAGERS"
-                # Comme ça, Dash utilise toujours la même clé "NB_PASSAGERS"
-                df_filtered = df_filtered.rename(columns={type_pax: "NB_PASSAGERS"})
+        # Calcul de la colonne NB_PASSAGERS
+        if type_pax == 'ALL' or not type_pax:
+            # Addition des deux colonnes
+            df_filtered["NB_PASSAGERS"] = (
+                df_filtered["APT_PAX_dep"].fillna(0) + 
+                df_filtered["APT_PAX_arr"].fillna(0)
+            )
+        elif type_pax in df_filtered.columns:
+            # Renommer la colonne en NB_PASSAGERS
+            df_filtered = df_filtered.rename(columns={type_pax: "NB_PASSAGERS"})
+        else:
+            df_filtered["NB_PASSAGERS"] = 0
 
-        df_filtered_dict = df_filtered.to_dict(orient="records")
-        return jsonify(df_filtered_dict)
+        return jsonify(df_filtered.to_dict(orient="records"))
 
-    return df_all 
+    return df_all
