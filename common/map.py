@@ -37,7 +37,7 @@ data = [trace]
 layout = go.Layout(
     title=f"Moyenne des passagers au départ et à l'arrivée par aéroport en {year}",
     xaxis=dict(title='Passagers au départ (moyenne)', type='log'),
-    yaxis=dict(title=f"Passagers à l'arrivée (moyenne)", type='log'),
+    yaxis=dict(title="Passagers à l'arrivée (moyenne)", type='log'),
     showlegend=True,
     legend=dict(x=0.01, y=0.99),
     hovermode="closest"
