@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.io import write_html
 
-df = pd.read_csv('../data/2018-data.csv', sep=";")
+df = pd.read_csv('../data/clean/2018-data.csv', sep=";")
 
 aeroports = df['APT_NOM']
 type(aeroports)
