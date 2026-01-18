@@ -1,3 +1,6 @@
+'''
+Module pour créer une application Dash affichant une carte choroplèthe interactive des flux de passagers
+'''
 from dash import Dash, html, dcc, Input, Output
 import plotly.express as px
 import pandas as pd
@@ -5,7 +8,7 @@ import json
 import requests
 import numpy as np
 
-# Chargement du GeoJSON
+# Chargement du GeoJSON contenant les contours des régions françaises
 with open('common/regions.geojson', 'r') as f:
     geojson_france = json.load(f)
 
@@ -17,6 +20,11 @@ LOG_MIN = 5.0   # environ 100k passagers
 LOG_MAX = 7.7   # environ 50M passagers
 
 def creation_app_dash(srv_Flask):
+    """ Création de l'application Dash pour la visualisation cartographique
+    Arguments:
+    srv_Flask - le serveur Flask configuré
+    """
+
     app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
 
     annees_disponibles = ["2018", "2019", "2020", "2021"]
@@ -25,7 +33,11 @@ def creation_app_dash(srv_Flask):
     header = html.Div(
         [
             html.A(
-                html.Img(src='/static/images/ESIEE_Paris_logo.png', className='logo', alt='ESIEE Paris Logo'),
+                html.Img(
+                    src='/static/images/ESIEE_Paris_logo.png', 
+                    className='logo', 
+                    alt='ESIEE Paris Logo'
+                ),
                 href="/",
                 className="logo_lien"
             ),
@@ -35,7 +47,7 @@ def creation_app_dash(srv_Flask):
     )
     
     # --- FILTRES ---
-    Dropdown_annees = html.Div(className="dropdown_annees",
+    Dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
         children=[
             html.Label("Sélectionner une année :"),
             dcc.Dropdown(
@@ -47,7 +59,7 @@ def creation_app_dash(srv_Flask):
         ]
     )
 
-    Dropdown_type = html.Div(className="dropdown_regions",
+    Dropdown_type = html.Div(className="dropdown_regions", #Dropdown pour sélectionner le type de flux
         children=[
             html.Label("Type de flux :"),
             dcc.Dropdown(
@@ -64,6 +76,7 @@ def creation_app_dash(srv_Flask):
     )
 
     # --- LAYOUT ---
+    # Disposition de l'application Dash
     app_Dash.layout = html.Div([
         html.Link(rel="stylesheet", href="/static/css/diagramme.css"), 
         header,
@@ -80,7 +93,7 @@ def creation_app_dash(srv_Flask):
             )
         ]),
 
-        html.Hr(style={'margin': '30px 0'}), 
+        html.Hr(style={'margin': '30px 0'}), # Séparateur visuel
 
         # Cartes DOM-TOM
         html.Div([
@@ -93,6 +106,7 @@ def creation_app_dash(srv_Flask):
     ])
 
     # --- CALLBACK ---
+    # CallBack pour la mise à jour des cartes en fonction des filtres sélectionnés
     @app_Dash.callback(
         [Output('map-metro', 'figure'),
          Output('map-dom-container', 'children')],
@@ -100,13 +114,23 @@ def creation_app_dash(srv_Flask):
          Input('filter_type_pax', 'value')]
     )
     def update_maps(selected_year, selected_pax):
+        """ Met à jour les cartes en fonction de l'année et du type de flux sélectionnés
+        Arguments:
+        selected_year - l'année sélectionnée
+        selected_pax - le type de flux sélectionné
+        Retourne:
+        fig_metro - la figure de la carte métropole mise à jour
+        dom_figures - la liste des figures des cartes DOM-TOM mises à jour
+        """
+
+        # Requête à l'API pour obtenir les données filtrées
         url = "http://127.0.0.1:5000/api/data"
         params = {'year': selected_year, 'type_pax': selected_pax}
         
         try:
             response = requests.get(url, params=params)
-            data = response.json()
-            df = pd.DataFrame(data)
+            data = response.json() # Récupération des données JSON de l'API
+            df = pd.DataFrame(data) # Conversion du JSON en DataFrame avec pandas
         except Exception as e:
             print(f"Erreur API: {e}")
             return {}, [] 
@@ -114,10 +138,12 @@ def creation_app_dash(srv_Flask):
         if df.empty:
             return {}, []
         
-        # 1. Préparation des données
+        # Préparation des données
+        # Regrouper par région et sommer les passagers
         df_map = df.groupby("REGION", as_index=False)["NB_PASSAGERS"].sum()
         df_map = df_map[df_map["NB_PASSAGERS"] > 0]
         
+        # Calculer le logarithme des passagers
         df_map["LOG_PAX"] = np.log10(df_map["NB_PASSAGERS"])
         df_map["LOG_PAX"] = df_map["LOG_PAX"].clip(lower=LOG_MIN, upper=LOG_MAX)
         
@@ -135,25 +161,26 @@ def creation_app_dash(srv_Flask):
             locations="REGION",
             featureidkey="properties.nom",
             color="LOG_PAX",
-            range_color=[LOG_MIN, LOG_MAX], 
+            range_color=[LOG_MIN, LOG_MAX], # Fixer l'échelle de couleur
             color_continuous_scale="Viridis",
             # Choix des données dont on a besoin pour le survol
             custom_data=["REGION", "PAX_FMT"] 
         )
 
         # Format personnalisé pour le hover
-        # %{customdata[0]} -> REGION
-        # %{customdata[1]} -> PAX_FMT
-        # <extra></extra> -> Supprime la boîte "trace 0"
+        # %{customdata[0]} -> REGION (nom de la région)
+        # %{customdata[1]} -> PAX_FMT (nombre de passagers)
         fig_metro.update_traces(
             hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]} passagers<extra></extra>"
         )
 
+        # Ajustements de la carte et du layout
         fig_metro.update_geos(fitbounds="locations", visible=False)
         fig_metro.update_layout(
             dragmode=False, 
             margin={"r":0,"t":0,"l":0,"b":0},
             coloraxis_showscale=True,
+            # Légende personnalisée pour l'échelle logarithmique
             coloraxis_colorbar=dict(
                 title="Passagers",
                 tickvals=[3, 4, 5, 6, 7, 8], 
@@ -168,7 +195,8 @@ def creation_app_dash(srv_Flask):
             
             if df_region.empty:
                 continue
-                
+            
+            # Création d'une carte individuelle pour chaque DOM-TOM
             fig_dom = px.choropleth(
                 df_region,
                 geojson=geojson_france,
@@ -189,11 +217,12 @@ def creation_app_dash(srv_Flask):
             fig_dom.update_layout(
                 dragmode=False,
                 margin={"r":0,"t":30,"l":0,"b":0},
-                coloraxis_showscale=False, 
+                coloraxis_showscale=False, # Masquer l'échelle de couleur pour les DOM-TOM
                 height=300, 
                 title_font_size=12
             )
             
+            # Ajouter la figure DOM-TOM à la liste
             dom_figures.append(
                 html.Div(
                     dcc.Graph(figure=fig_dom, config={'scrollZoom': False, 'displayModeBar': False}), 
@@ -201,6 +230,6 @@ def creation_app_dash(srv_Flask):
                 )
             )
 
-        return fig_metro, dom_figures
+        return fig_metro, dom_figures # Retourne la figure métropole et les figures DOM-TOM
 
-    return app_Dash
+    return app_Dash # Retourne l'application Dash créée
