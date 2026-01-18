@@ -65,6 +65,9 @@ def creation_app_dash(srv_Flask):
     Diagramme_dep = dcc.Graph(id= "graphe_diagramme_dep", className="graphe")
     Diagramme_arr = dcc.Graph(id= "graphe_diagramme_arr", className="graphe")
     Diagramme_tr = dcc.Graph(id= "graphe_diagramme_tr", className="graphe")
+    Diagramme_4_annees_dep = dcc.Graph(id="graphe_diagramme_4_annees_dep",className="graphe")
+    Diagramme_4_annees_arr = dcc.Graph(id="graphe_diagramme_4_annees_arr",className="graphe")
+    Diagramme_4_annees_tr = dcc.Graph(id="graphe_diagramme_4_annees_tr",className="graphe")
     Diagramme_camembert = dcc.Graph(id= "graphe_diagramme_camembert", className="graphe")
 
     # Disposition de l'application Dash
@@ -74,16 +77,22 @@ def creation_app_dash(srv_Flask):
     Dropdown_annees,
     Dropdown_regions,
     Diagramme_dep,
+    Diagramme_4_annees_dep,
     Diagramme_arr,
-    Diagramme_tr,
+    Diagramme_4_annees_arr,
+    Diagramme_tr, 
+    Diagramme_4_annees_tr,
     Diagramme_camembert
     ])
 
     # Callback pour mettre à jour les diagrammes en fonction des sélections
     @app_Dash.callback(
          Output("graphe_diagramme_dep", "figure"),
+         Output("graphe_diagramme_4_annees_dep", "figure"),
          Output("graphe_diagramme_arr", "figure"),
+         Output("graphe_diagramme_4_annees_arr", "figure"),
          Output("graphe_diagramme_tr", "figure"),
+         Output("graphe_diagramme_4_annees_tr", "figure"),
          Output("graphe_diagramme_camembert", "figure"),
          Input("annee_dropdown", "value"),
          Input("region_dropdown", "value")
@@ -101,6 +110,9 @@ def creation_app_dash(srv_Flask):
         fig_dep -- figure du diagramme des passagers au départ
         fig_arr -- figure du diagramme des passagers à l'arrivée
         fig_tr -- figure du diagramme des passagers en transit
+        fig_4_annees_dep -- figure du diagramme des passagers au départ sur 4 années
+        fig_4_annees_arr -- figure du diagramme des passagers à l'arrivée sur 4 années
+        fig_4_annees_tr -- figure du diagramme des passagers en transit sur 4 années
         fig_camembert -- figure du diagramme en camembert des 3 types de passagers
         
         """
@@ -110,10 +122,17 @@ def creation_app_dash(srv_Flask):
         df = pd.DataFrame(data_json) #convertir les données JSON en DataFrame pandas
         df["DATE"] = pd.to_datetime(df["ANMOIS"].astype(str), format="%Y%m") #convertir ANMOIS en format date
 
-        # Regrouper les données par DATE et sommer les passagers
+        # Regrouper les données par DATE et sommer les passagers pour chaque mois
         df_groupe_depart = (df.groupby("DATE", as_index=False)["APT_PAX_dep"].sum())
         df_groupe_arrivee = (df.groupby("DATE", as_index=False)["APT_PAX_arr"].sum())
         df_groupe_transit = (df.groupby("DATE", as_index=False)["APT_PAX_tr"].sum())
+        
+        # Données des 4 années pour la région sélectionnée
+        df_all_region = df_all[df_all["REGION"] == region]
+        # Regrouper par ANNEE et sommer les passagers
+        df_4_annees_dep = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_dep"].sum()
+        df_4_annees_arr = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_arr"].sum()
+        df_4_annees_tr = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_tr"].sum()
 
         # Créer les figures des diagrammes
         fig_dep = px.bar(
@@ -123,6 +142,15 @@ def creation_app_dash(srv_Flask):
             title=f"Passagers au départ - {region} en ({annee})",
             labels={"APT_PAX_dep": "Passagers au départ"}
         )
+
+        fig_4_annees_dep = px.bar(
+            df_4_annees_dep,
+            x="ANNEE",
+            y="APT_PAX_dep",
+            title=f"Passagers au départ par année - {region}",
+            labels={"ANNEE": "Année", "APT_PAX_dep": "Passagers"}
+        )
+
         fig_arr = px.bar(
             df_groupe_arrivee,
             x="DATE",
@@ -130,6 +158,15 @@ def creation_app_dash(srv_Flask):
             title=f"Passagers à l'arrivée - {region} en ({annee})",
             labels={"APT_PAX_arr": "Passagers à l'arrivée"}
         )
+
+        fig_4_annees_arr = px.bar(
+            df_4_annees_arr,
+            x="ANNEE",
+            y="APT_PAX_arr",
+            title=f"Passagers à l'arrivée par année - {region}",
+            labels={"ANNEE": "Année", "APT_PAX_arr": "Passagers"}
+        )
+
         fig_tr = px.bar(
             df_groupe_transit,
             x="DATE",
@@ -138,10 +175,21 @@ def creation_app_dash(srv_Flask):
             labels={"APT_PAX_tr": "Passagers en transit"}
         )
 
+        fig_4_annees_tr = px.bar(
+            df_4_annees_tr,
+            x="ANNEE",
+            y="APT_PAX_tr",
+            title=f"Passagers en transit par année - {region}",
+            labels={"ANNEE": "Année", "APT_PAX_tr": "Passagers"}
+        )
+
         # Personnalisation des couleurs des barres
         fig_dep.update_traces(marker_color="deepskyblue")
+        fig_4_annees_dep.update_traces(marker_color="deepskyblue")
         fig_arr.update_traces(marker_color="darkgreen")
+        fig_4_annees_arr.update_traces(marker_color="darkgreen")
         fig_tr.update_traces(marker_color="darkorange")
+        fig_4_annees_tr.update_traces(marker_color="darkorange")
 
         # Somme des passagers pour l'année sélectionnée
         total_dep = df_groupe_depart["APT_PAX_dep"].sum()
@@ -168,10 +216,7 @@ def creation_app_dash(srv_Flask):
             title=f"Répartition des passagers - {region} en ({annee})"
         )
 
-        return fig_dep, fig_arr, fig_tr, fig_camembert # Retourner les figures
-
-
-
+        return fig_dep, fig_4_annees_dep, fig_arr, fig_4_annees_arr, fig_tr, fig_4_annees_tr, fig_camembert # Retourner les figures
 
     
 
