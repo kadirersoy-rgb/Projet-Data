@@ -5,11 +5,11 @@ Module pour définir une API Flask permettant un filtrage dynamique des données
 from flask import jsonify, request
 from common import use_data
 
-def api(srv_Flask):
+def api(srv_flask):
     """ Définition de l'API pour le filtrage dynamique des données
 
     Arguments:
-    srv_Flask - le serveur Flask configuré
+    srv_flask - le serveur Flask configuré
 
     Returns:
     df_filtered_json - données JSON converties à partir du DataFrame filtré
@@ -19,7 +19,7 @@ def api(srv_Flask):
     df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4]
 
     # Définition de la route API
-    @srv_Flask.route('/api/data')
+    @srv_flask.route('/api/data')
     def api_data():
 
         # Récupération des paramètres de la requête

@@ -19,13 +19,13 @@ DOM_TOM = ["La Réunion", "Guadeloupe", "Martinique", "Guyane", "Mayotte"]
 LOG_MIN = 5.0   # environ 100k passagers
 LOG_MAX = 7.7   # environ 50M passagers
 
-def creation_app_dash(srv_Flask):
+def creation_app_dash(srv_flask):
     """ Création de l'application Dash pour la visualisation cartographique
     Arguments:
-    srv_Flask - le serveur Flask configuré
+    srv_flask - le serveur Flask configuré
     """
 
-    app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
+    app_dash = Dash(__name__, server=srv_flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
 
     annees_disponibles = ["2018", "2019", "2020", "2021"]
 
@@ -52,7 +52,7 @@ def creation_app_dash(srv_Flask):
     )
 
     # --- FILTRES ---
-    Dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
+    dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
         children=[
             html.Label("Sélectionner une année :"),
             dcc.Dropdown(
@@ -64,7 +64,7 @@ def creation_app_dash(srv_Flask):
         ]
     )
 
-    Dropdown_type = html.Div(className="dropdown_regions", #Dropdown pour sélectionner le type de flux
+    dropdown_type = html.Div(className="dropdown_regions", #Dropdown pour sélectionner le type de flux
         children=[
             html.Label("Type de flux :"),
             dcc.Dropdown(
@@ -82,10 +82,10 @@ def creation_app_dash(srv_Flask):
 
     # --- LAYOUT ---
     # Disposition de l'application Dash
-    app_Dash.layout = html.Div([
+    app_dash.layout = html.Div([
         html.Link(rel="stylesheet", href="/static/css/diagramme.css"),
         header,
-        html.Div([Dropdown_annees, Dropdown_type], style={'display': 'flex', 'gap': '20px', 'padding': '20px'}),
+        html.Div([dropdown_annees, dropdown_type], style={'display': 'flex', 'gap': '20px', 'padding': '20px'}),
 
         # Carte Métropole
         html.Div([
@@ -112,7 +112,7 @@ def creation_app_dash(srv_Flask):
 
     # --- CALLBACK ---
     # CallBack pour la mise à jour des cartes en fonction des filtres sélectionnés
-    @app_Dash.callback(
+    @app_dash.callback(
         [Output('map-metro', 'figure'),
          Output('map-dom-container', 'children')],
         [Input('filter_year', 'value'),
@@ -191,11 +191,11 @@ def creation_app_dash(srv_Flask):
             margin={"r":0,"t":0,"l":0,"b":0},
             coloraxis_showscale=True,
             # Légende personnalisée pour l'échelle logarithmique
-            coloraxis_colorbar=dict(
-                title="Passagers",
-                tickvals=[3, 4, 5, 6, 7, 8],
-                ticktext=["1k", "10k", "100k", "1M", "10M", "100M"],
-            )
+            coloraxis_colorbar={
+                "title": "Passagers",
+                "tickvals": [3, 4, 5, 6, 7, 8],
+                "ticktext": ["1k", "10k", "100k", "1M", "10M", "100M"],
+            }
         )
 
         # --- CARTES DOM-TOM ---
@@ -242,4 +242,4 @@ def creation_app_dash(srv_Flask):
 
         return fig_metro, dom_figures # Retourne la figure métropole et les figures DOM-TOM
 
-    return app_Dash # Retourne l'application Dash créée
+    return app_dash # Retourne l'application Dash créée
