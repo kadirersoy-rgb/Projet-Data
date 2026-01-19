@@ -23,7 +23,7 @@ LOG_MAX = 7.7   # environ 50M passagers
 TRANSIT_LOG_MIN = 2.3  # environ 200 passagers
 TRANSIT_LOG_MAX = 4.9  # environ 80k passagers
 
-def creation_app_dash(srv_Flask):
+def creation_app_dash(srv_flask):
     """ Création de l'application Dash pour la visualisation cartographique
     Arguments:
     srv_flask - le serveur Flask configuré
