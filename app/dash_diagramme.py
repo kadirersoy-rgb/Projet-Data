@@ -35,7 +35,12 @@ def creation_app_dash(srv_Flask):
                 href="/",
                 className="logo_lien"
             ),
-            html.H1("Diagramme", className = "titre_header_diagramme")
+            html.H1("Diagramme", className = "titre_header_diagramme"),
+            html.A(
+                href="/",
+                children=html.Button("Accueil", className="button_home"),
+                className="button_home_lien"
+            )
         ],
 
         className = 'header'

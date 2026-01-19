@@ -48,3 +48,16 @@ body {
 .logo_lien {
     position: absolute; 
 }
+
+.button_home {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: white;
+    color: rgb(6, 131, 185);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
