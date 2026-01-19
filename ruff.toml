@@ -1,0 +1,5 @@
+exclude = ["venv", "build", "dist"]
+select = ["E", "F", "W", "C", "N"]
+ignore = ["F401"]
+line-length = 100
+fix = true	  

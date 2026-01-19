@@ -15,7 +15,7 @@ def creation_app_dash(srv_Flask):
     Arguments:
     srv_Flask - le serveur Flask configuré
     """
-    
+
     app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/diagramme/", suppress_callback_exceptions=True)
 
     df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021"])
@@ -49,7 +49,7 @@ def creation_app_dash(srv_Flask):
             options=[{"label":str(annee), "value": annee} for annee in annees_disponibles],
             value=annees_disponibles[0]
             )
-    ]) 
+    ])
 
     Dropdown_regions = html.Div(className="dropdown_regions", #Dropdown pour sélectionner la région
         children = [
@@ -80,7 +80,7 @@ def creation_app_dash(srv_Flask):
     Diagramme_4_annees_dep,
     Diagramme_arr,
     Diagramme_4_annees_arr,
-    Diagramme_tr, 
+    Diagramme_tr,
     Diagramme_4_annees_tr,
     Diagramme_camembert
     ])
@@ -126,7 +126,7 @@ def creation_app_dash(srv_Flask):
         df_groupe_depart = (df.groupby("DATE", as_index=False)["APT_PAX_dep"].sum())
         df_groupe_arrivee = (df.groupby("DATE", as_index=False)["APT_PAX_arr"].sum())
         df_groupe_transit = (df.groupby("DATE", as_index=False)["APT_PAX_tr"].sum())
-        
+
         # Données des 4 années pour la région sélectionnée
         df_all_region = df_all[df_all["REGION"] == region]
         # Regrouper par ANNEE et sommer les passagers
@@ -218,6 +218,5 @@ def creation_app_dash(srv_Flask):
 
         return fig_dep, fig_4_annees_dep, fig_arr, fig_4_annees_arr, fig_tr, fig_4_annees_tr, fig_camembert # Retourner les figures
 
-    
 
-    
+

@@ -13,7 +13,7 @@ def Normaliser_ANMOIS():
     fichiers = [os.path.join("data/clean", f) for f in os.listdir("data/clean")]
     for fichier in fichiers:
         df = pd.read_csv(fichier, sep=";")
-        df['ANMOIS'] = df['ANMOIS'].apply(lambda x: str(x)[:4]+ "-" + str(x)[4:]) 
+        df['ANMOIS'] = df['ANMOIS'].apply(lambda x: str(x)[:4]+ "-" + str(x)[4:])
         df.to_csv(f'data/clean/{fichier.split("/")[2]}', sep=";", index=False)
 
 def AjoutRegion():
@@ -33,7 +33,7 @@ def AjoutRegion():
 
 def nettoyage_fichier():
     """ Supprime tout les fichiers dans les dossiers data/raw et data/clean
-    """    
+    """
     dossiers = ["data/raw", "data/clean"]
     for dossier in dossiers:
         for fichier in os.listdir(dossier):
