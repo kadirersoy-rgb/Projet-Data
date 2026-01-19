@@ -2,14 +2,14 @@ import os
 import pandas as pd
 from typing import List
 
-def extraire_donnees(Dataframe, donnees: List[str]) -> None:
+def extraire_donnees(dataframes, donnees: List[str]) -> None:
     """ Extraire les données d'un Dataframe sous forme de tableau
 
     Arguments:
-    Dataframes -- un dataframe pandas
+    dataframes -- un dataframe pandas
     donnees -- tableau des entetes de données voulue ex : ["ANMOIS","APT"]
     """
-    tableau = Dataframe[donnees].values.tolist()
+    tableau = dataframes[donnees].values.tolist()
     return tableau
 
 
@@ -21,14 +21,14 @@ def charger_les_data(annees: List[str]) -> None:
     """
     projet_folder_data= os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data/clean")
     fichiers={}
-    Dataframes={}
+    dataframes={}
 
     for annee in annees:
         fichiers[annee] = os.path.join(projet_folder_data, f"{annee}-data.csv")
 
     for annees, chemin in fichiers.items():
         df = pd.read_csv(chemin, sep=";")
-        Dataframes[annees] = df
+        dataframes[annees] = df
 
-    df = pd.concat(Dataframes.values(), ignore_index=True)
+    df = pd.concat(dataframes.values(), ignore_index=True)
     return df

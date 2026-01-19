@@ -26,10 +26,10 @@ TRANSIT_LOG_MAX = 4.9  # environ 80k passagers
 def creation_app_dash(srv_Flask):
     """ Création de l'application Dash pour la visualisation cartographique
     Arguments:
-    srv_Flask - le serveur Flask configuré
+    srv_flask - le serveur Flask configuré
     """
 
-    app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
+    app_dash = Dash(__name__, server=srv_flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
 
     annees_disponibles = ["2018", "2019", "2020", "2021", "2022", "2023", "2024"]
 
@@ -56,7 +56,7 @@ def creation_app_dash(srv_Flask):
     )
 
     # --- FILTRES ---
-    Dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
+    dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
         children=[
             html.Label("Sélectionner une année :"),
             dcc.Dropdown(
@@ -68,7 +68,7 @@ def creation_app_dash(srv_Flask):
         ]
     )
 
-    Dropdown_type = html.Div(className="dropdown_regions", #Dropdown pour sélectionner le type de flux
+    dropdown_type = html.Div(className="dropdown_regions", #Dropdown pour sélectionner le type de flux
         children=[
             html.Label("Type de flux :"),
             dcc.Dropdown(
@@ -87,10 +87,10 @@ def creation_app_dash(srv_Flask):
 
     # --- LAYOUT ---
     # Disposition de l'application Dash
-    app_Dash.layout = html.Div([
+    app_dash.layout = html.Div([
         html.Link(rel="stylesheet", href="/static/css/diagramme.css"),
         header,
-        html.Div([Dropdown_annees, Dropdown_type], style={'display': 'flex', 'gap': '20px', 'padding': '20px'}),
+        html.Div([dropdown_annees, dropdown_type], style={'display': 'flex', 'gap': '20px', 'padding': '20px'}),
 
         # Carte Métropole
         html.Div([
@@ -117,7 +117,7 @@ def creation_app_dash(srv_Flask):
 
     # --- CALLBACK ---
     # CallBack pour la mise à jour des cartes en fonction des filtres sélectionnés
-    @app_Dash.callback(
+    @app_dash.callback(
         [Output('map-metro', 'figure'),
          Output('map-dom-container', 'children')],
         [Input('filter_year', 'value'),
@@ -267,4 +267,4 @@ def creation_app_dash(srv_Flask):
 
         return fig_metro, dom_figures # Retourne la figure métropole et les figures DOM-TOM
 
-    return app_Dash # Retourne l'application Dash créée
+    return app_dash # Retourne l'application Dash créée

@@ -7,7 +7,7 @@ import os
 import pandas as pd
 from common import get_data
 
-def Normaliser_ANMOIS():
+def normaliser_an_mois():
     """Normalise la colonne ANMOIS du Dataframe entrée en parametre
     """
     fichiers = [os.path.join("data/clean", f) for f in os.listdir("data/clean")]
@@ -16,7 +16,7 @@ def Normaliser_ANMOIS():
         df['ANMOIS'] = df['ANMOIS'].apply(lambda x: str(x)[:4]+ "-" + str(x)[4:])
         df.to_csv(f'data/clean/{fichier.split("/")[2]}', sep=";", index=False)
 
-def AjoutRegion():
+def ajout_region():
     """ Ajout d'une région pour les aéroport dans le json
     """
     with open("region.json", "r", encoding="utf-8") as f:
@@ -44,5 +44,5 @@ def initialiser_donnees():
     """
     nettoyage_fichier()
     get_data.charger_donnees()
-    Normaliser_ANMOIS()
-    AjoutRegion()
+    normaliser_an_mois()
+    ajout_region()
