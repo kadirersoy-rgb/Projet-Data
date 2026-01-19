@@ -27,7 +27,7 @@ def creation_app_dash(srv_Flask):
 
     app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
 
-    annees_disponibles = ["2018", "2019", "2020", "2021"]
+    annees_disponibles = ["2018", "2019", "2020", "2021", "2022", "2023", "2024"]
 
     # --- HEADER ---
     header = html.Div(
