@@ -40,7 +40,7 @@ def api(srv_Flask):
         if type_pax == 'ALL' or not type_pax:
             # Addition des deux colonnes
             df_filtered["NB_PASSAGERS"] = (
-                df_filtered["APT_PAX_dep"].fillna(0) + 
+                df_filtered["APT_PAX_dep"].fillna(0) +
                 df_filtered["APT_PAX_arr"].fillna(0)
             )
         elif type_pax in df_filtered.columns:

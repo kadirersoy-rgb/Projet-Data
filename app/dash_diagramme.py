@@ -15,7 +15,7 @@ def creation_app_dash(srv_Flask):
     Arguments:
     srv_Flask - le serveur Flask configuré
     """
-    
+
     app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/diagramme/", suppress_callback_exceptions=True)
 
     df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021", "2022", "2023", "2024"])
@@ -35,7 +35,12 @@ def creation_app_dash(srv_Flask):
                 href="/",
                 className="logo_lien"
             ),
-            html.H1("Diagramme", className = "titre_header_diagramme")
+            html.H1("Diagramme", className = "titre_header_diagramme"),
+            html.A(
+                href="/",
+                children=html.Button("Accueil", className="button_home"),
+                className="button_home_lien"
+            )
         ],
 
         className = 'header'
@@ -49,7 +54,7 @@ def creation_app_dash(srv_Flask):
             options=[{"label":str(annee), "value": annee} for annee in annees_disponibles],
             value=annees_disponibles[0]
             )
-    ]) 
+    ])
 
     Dropdown_regions = html.Div(className="dropdown_regions", #Dropdown pour sélectionner la région
         children = [
@@ -218,6 +223,5 @@ def creation_app_dash(srv_Flask):
 
         return fig_dep, fig_annees_dep, fig_arr, fig_annees_arr, fig_tr, fig_annees_tr, fig_camembert # Retourner les figures
 
-    
 
-    
+

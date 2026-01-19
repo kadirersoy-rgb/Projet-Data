@@ -86,7 +86,7 @@ body {
 .participants {
     position: fixed;
     font-size: 1.5rem;
-    color: black;
+    color: #fff;
     bottom: 0;
     width: 100%;
     padding: 20px;

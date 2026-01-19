@@ -34,18 +34,23 @@ def creation_app_dash(srv_Flask):
         [
             html.A(
                 html.Img(
-                    src='/static/images/ESIEE_Paris_logo.png', 
-                    className='logo', 
+                    src='/static/images/ESIEE_Paris_logo.png',
+                    className='logo',
                     alt='ESIEE Paris Logo'
                 ),
                 href="/",
                 className="logo_lien"
             ),
-            html.H1("Carte Choroplèthe", className="titre_header_diagramme")
+            html.H1("Carte Choroplèthe", className="titre_header_diagramme"),
+            html.A(
+                href="/",
+                children=html.Button("Accueil", className="button_home"),
+                className="button_home_lien"
+            )
         ],
         className='header'
     )
-    
+
     # --- FILTRES ---
     Dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
         children=[
@@ -67,9 +72,9 @@ def creation_app_dash(srv_Flask):
                 options=[
                     {'label': 'Départ', 'value': 'APT_PAX_dep'},
                     {'label': 'Arrivée', 'value': 'APT_PAX_arr'},
-                    {'label': 'Total (Départ + Arrivée)', 'value': 'ALL'} 
+                    {'label': 'Total (Départ + Arrivée)', 'value': 'ALL'}
                 ],
-                value='ALL', 
+                value='ALL',
                 clearable=False
             )
         ]
@@ -78,17 +83,17 @@ def creation_app_dash(srv_Flask):
     # --- LAYOUT ---
     # Disposition de l'application Dash
     app_Dash.layout = html.Div([
-        html.Link(rel="stylesheet", href="/static/css/diagramme.css"), 
+        html.Link(rel="stylesheet", href="/static/css/diagramme.css"),
         header,
         html.Div([Dropdown_annees, Dropdown_type], style={'display': 'flex', 'gap': '20px', 'padding': '20px'}),
-        
+
         # Carte Métropole
         html.Div([
             html.H3("France Métropolitaine", style={'textAlign': 'center'}),
             dcc.Graph(
-                id="map-metro", 
-                className="graphe", 
-                config={'scrollZoom': False, 'displayModeBar': False}, 
+                id="map-metro",
+                className="graphe",
+                config={'scrollZoom': False, 'displayModeBar': False},
                 style={'height': '600px'}
             )
         ]),
@@ -99,7 +104,7 @@ def creation_app_dash(srv_Flask):
         html.Div([
             html.H3("Outre-mer", style={'textAlign': 'center'}),
             html.Div(
-                id="map-dom-container", 
+                id="map-dom-container",
                 style={'display': 'flex', 'justify-content': 'center', 'flex-wrap': 'wrap', 'gap': '10px'}
             )
         ])
@@ -126,27 +131,27 @@ def creation_app_dash(srv_Flask):
         # Requête à l'API pour obtenir les données filtrées
         url = "http://127.0.0.1:5000/api/data"
         params = {'year': selected_year, 'type_pax': selected_pax}
-        
+
         try:
             response = requests.get(url, params=params)
             data = response.json() # Récupération des données JSON de l'API
             df = pd.DataFrame(data) # Conversion du JSON en DataFrame avec pandas
         except Exception as e:
             print(f"Erreur API: {e}")
-            return {}, [] 
-        
+            return {}, []
+
         if df.empty:
             return {}, []
-        
+
         # Préparation des données
         # Regrouper par région et sommer les passagers
         df_map = df.groupby("REGION", as_index=False)["NB_PASSAGERS"].sum()
         df_map = df_map[df_map["NB_PASSAGERS"] > 0]
-        
+
         # Calculer le logarithme des passagers
         df_map["LOG_PAX"] = np.log10(df_map["NB_PASSAGERS"])
         df_map["LOG_PAX"] = df_map["LOG_PAX"].clip(lower=LOG_MIN, upper=LOG_MAX)
-        
+
         # Formatage des passagers pour le hover
         # Exemple: 1234567 -> 1 234 567
         df_map["PAX_FMT"] = df_map["NB_PASSAGERS"].apply(lambda x: "{:,}".format(int(x)).replace(",", " "))
@@ -164,7 +169,7 @@ def creation_app_dash(srv_Flask):
             range_color=[LOG_MIN, LOG_MAX], # Fixer l'échelle de couleur
             color_continuous_scale="Viridis",
             # Choix des données dont on a besoin pour le survol
-            custom_data=["REGION", "PAX_FMT"] 
+            custom_data=["REGION", "PAX_FMT"]
         )
 
         # Format personnalisé pour le hover
@@ -175,15 +180,20 @@ def creation_app_dash(srv_Flask):
         )
 
         # Ajustements de la carte et du layout
-        fig_metro.update_geos(fitbounds="locations", visible=False)
+        fig_metro.update_geos(
+            projection_type="mercator", # Important pour ne pas déformer la carte
+            fitbounds="locations",
+            visible=False
+        )
+
         fig_metro.update_layout(
-            dragmode=False, 
+            dragmode=False,
             margin={"r":0,"t":0,"l":0,"b":0},
             coloraxis_showscale=True,
             # Légende personnalisée pour l'échelle logarithmique
             coloraxis_colorbar=dict(
                 title="Passagers",
-                tickvals=[3, 4, 5, 6, 7, 8], 
+                tickvals=[3, 4, 5, 6, 7, 8],
                 ticktext=["1k", "10k", "100k", "1M", "10M", "100M"],
             )
         )
@@ -192,10 +202,10 @@ def creation_app_dash(srv_Flask):
         dom_figures = []
         for region_name in DOM_TOM:
             df_region = df_map[df_map["REGION"] == region_name]
-            
+
             if df_region.empty:
                 continue
-            
+
             # Création d'une carte individuelle pour chaque DOM-TOM
             fig_dom = px.choropleth(
                 df_region,
@@ -203,29 +213,29 @@ def creation_app_dash(srv_Flask):
                 locations="REGION",
                 featureidkey="properties.nom",
                 color="LOG_PAX",
-                range_color=[LOG_MIN, LOG_MAX], 
+                range_color=[LOG_MIN, LOG_MAX],
                 color_continuous_scale="Viridis",
                 custom_data=["REGION", "PAX_FMT"],
                 title=region_name
             )
-            
+
             fig_dom.update_traces(
                 hovertemplate="<b>%{customdata[0]}</b><br>%{customdata[1]} passagers<extra></extra>"
             )
-            
+
             fig_dom.update_geos(fitbounds="locations", visible=False)
             fig_dom.update_layout(
                 dragmode=False,
                 margin={"r":0,"t":30,"l":0,"b":0},
                 coloraxis_showscale=False, # Masquer l'échelle de couleur pour les DOM-TOM
-                height=300, 
+                height=300,
                 title_font_size=12
             )
-            
+
             # Ajouter la figure DOM-TOM à la liste
             dom_figures.append(
                 html.Div(
-                    dcc.Graph(figure=fig_dom, config={'scrollZoom': False, 'displayModeBar': False}), 
+                    dcc.Graph(figure=fig_dom, config={'scrollZoom': False, 'displayModeBar': False}),
                     style={'width': '250px', 'display': 'inline-block'}
                 )
             )
