@@ -19,15 +19,19 @@ DOM_TOM = ["La Réunion", "Guadeloupe", "Martinique", "Guyane", "Mayotte"]
 LOG_MIN = 5.0   # environ 100k passagers
 LOG_MAX = 7.7   # environ 50M passagers
 
-def creation_app_dash(srv_Flask):
+# Bornes pour le flux de transit (plus faible)
+TRANSIT_LOG_MIN = 2.3  # environ 200 passagers
+TRANSIT_LOG_MAX = 4.9  # environ 80k passagers
+
+def creation_app_dash(srv_flask):
     """ Création de l'application Dash pour la visualisation cartographique
     Arguments:
-    srv_Flask - le serveur Flask configuré
+    srv_flask - le serveur Flask configuré
     """
 
-    app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
+    app_dash = Dash(__name__, server=srv_flask, routes_pathname_prefix="/map/", suppress_callback_exceptions=True)
 
-    annees_disponibles = ["2018", "2019", "2020", "2021"]
+    annees_disponibles = ["2018", "2019", "2020", "2021", "2022", "2023", "2024"]
 
     # --- HEADER ---
     header = html.Div(
@@ -52,19 +56,19 @@ def creation_app_dash(srv_Flask):
     )
 
     # --- FILTRES ---
-    Dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
+    dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
         children=[
             html.Label("Sélectionner une année :"),
             dcc.Dropdown(
                 id="filter_year",
                 options=[{"label": str(a), "value": a} for a in annees_disponibles],
-                value="2018",
+                value="2018", # Valeur par défaut
                 clearable=False
             )
         ]
     )
 
-    Dropdown_type = html.Div(className="dropdown_regions", #Dropdown pour sélectionner le type de flux
+    dropdown_type = html.Div(className="dropdown_regions", #Dropdown pour sélectionner le type de flux
         children=[
             html.Label("Type de flux :"),
             dcc.Dropdown(
@@ -72,9 +76,10 @@ def creation_app_dash(srv_Flask):
                 options=[
                     {'label': 'Départ', 'value': 'APT_PAX_dep'},
                     {'label': 'Arrivée', 'value': 'APT_PAX_arr'},
-                    {'label': 'Total (Départ + Arrivée)', 'value': 'ALL'}
+                    {'label': 'Total (Départ + Arrivée)', 'value': 'ALL'},
+                    {'label': 'Transit', 'value': 'APT_PAX_tr'}
                 ],
-                value='ALL',
+                value='ALL', # Valeur par défaut
                 clearable=False
             )
         ]
@@ -82,10 +87,10 @@ def creation_app_dash(srv_Flask):
 
     # --- LAYOUT ---
     # Disposition de l'application Dash
-    app_Dash.layout = html.Div([
+    app_dash.layout = html.Div([
         html.Link(rel="stylesheet", href="/static/css/diagramme.css"),
         header,
-        html.Div([Dropdown_annees, Dropdown_type], style={'display': 'flex', 'gap': '20px', 'padding': '20px'}),
+        html.Div([dropdown_annees, dropdown_type], style={'display': 'flex', 'gap': '20px', 'padding': '20px'}),
 
         # Carte Métropole
         html.Div([
@@ -112,7 +117,7 @@ def creation_app_dash(srv_Flask):
 
     # --- CALLBACK ---
     # CallBack pour la mise à jour des cartes en fonction des filtres sélectionnés
-    @app_Dash.callback(
+    @app_dash.callback(
         [Output('map-metro', 'figure'),
          Output('map-dom-container', 'children')],
         [Input('filter_year', 'value'),
@@ -143,6 +148,24 @@ def creation_app_dash(srv_Flask):
         if df.empty:
             return {}, []
 
+
+        # Choix de l'échelle selon le type de flux
+        if selected_pax == "APT_PAX_tr":
+            log_min = TRANSIT_LOG_MIN
+            log_max = TRANSIT_LOG_MAX
+            colorbar_ticks = {
+                "tickvals": [2, 3, 4, 5],
+                "ticktext": ["100", "1k", "10k", "100k"]
+            }
+        else:
+            log_min = LOG_MIN
+            log_max = LOG_MAX
+            colorbar_ticks = {
+                "tickvals": [3, 4, 5, 6, 7, 8],
+                "ticktext": ["1k", "10k", "100k", "1M", "10M", "100M"]
+    }
+
+
         # Préparation des données
         # Regrouper par région et sommer les passagers
         df_map = df.groupby("REGION", as_index=False)["NB_PASSAGERS"].sum()
@@ -150,7 +173,8 @@ def creation_app_dash(srv_Flask):
 
         # Calculer le logarithme des passagers
         df_map["LOG_PAX"] = np.log10(df_map["NB_PASSAGERS"])
-        df_map["LOG_PAX"] = df_map["LOG_PAX"].clip(lower=LOG_MIN, upper=LOG_MAX)
+        df_map["LOG_PAX"] = df_map["LOG_PAX"].clip(lower=log_min, upper=log_max)
+
 
         # Formatage des passagers pour le hover
         # Exemple: 1234567 -> 1 234 567
@@ -166,7 +190,8 @@ def creation_app_dash(srv_Flask):
             locations="REGION",
             featureidkey="properties.nom",
             color="LOG_PAX",
-            range_color=[LOG_MIN, LOG_MAX], # Fixer l'échelle de couleur
+            # range_color=[LOG_MIN, LOG_MAX], # Fixer l'échelle de couleur
+            range_color=[log_min, log_max],
             color_continuous_scale="Viridis",
             # Choix des données dont on a besoin pour le survol
             custom_data=["REGION", "PAX_FMT"]
@@ -193,8 +218,7 @@ def creation_app_dash(srv_Flask):
             # Légende personnalisée pour l'échelle logarithmique
             coloraxis_colorbar=dict(
                 title="Passagers",
-                tickvals=[3, 4, 5, 6, 7, 8],
-                ticktext=["1k", "10k", "100k", "1M", "10M", "100M"],
+                **colorbar_ticks
             )
         )
 
@@ -213,7 +237,8 @@ def creation_app_dash(srv_Flask):
                 locations="REGION",
                 featureidkey="properties.nom",
                 color="LOG_PAX",
-                range_color=[LOG_MIN, LOG_MAX],
+                # range_color=[LOG_MIN, LOG_MAX],
+                range_color=[log_min, log_max],
                 color_continuous_scale="Viridis",
                 custom_data=["REGION", "PAX_FMT"],
                 title=region_name
@@ -242,4 +267,4 @@ def creation_app_dash(srv_Flask):
 
         return fig_metro, dom_figures # Retourne la figure métropole et les figures DOM-TOM
 
-    return app_Dash # Retourne l'application Dash créée
+    return app_dash # Retourne l'application Dash créée

@@ -9,14 +9,14 @@ import pandas as pd
 from common import use_data
 
 
-def creation_app_dash(srv_Flask):
+def creation_app_dash(srv_flask):
     """ Création de l'application Dash pour les diagrammes
 
     Arguments:
-    srv_Flask - le serveur Flask configuré
+    srv_flask - le serveur Flask configuré
     """
 
-    app_Dash = Dash(__name__, server=srv_Flask, routes_pathname_prefix="/diagramme/", suppress_callback_exceptions=True)
+    app_dash = Dash(__name__, server=srv_flask, routes_pathname_prefix="/diagramme/", suppress_callback_exceptions=True)
 
     df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021", "2022", "2023", "2024"])
     df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4] #extraire l'année de la colonne ANMOIS
@@ -46,7 +46,7 @@ def creation_app_dash(srv_Flask):
         className = 'header'
     )
 
-    Dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
+    dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
         children = [
         html.Label("Sélectionner une année:"),
         dcc.Dropdown(
@@ -56,7 +56,7 @@ def creation_app_dash(srv_Flask):
             )
     ])
 
-    Dropdown_regions = html.Div(className="dropdown_regions", #Dropdown pour sélectionner la région
+    dropdown_regions = html.Div(className="dropdown_regions", #Dropdown pour sélectionner la région
         children = [
         html.Label("Sélectionner une région:"),
         dcc.Dropdown(
@@ -67,31 +67,31 @@ def creation_app_dash(srv_Flask):
     ])
 
     # Création des graphiques
-    Diagramme_dep = dcc.Graph(id= "graphe_diagramme_dep", className="graphe")
-    Diagramme_arr = dcc.Graph(id= "graphe_diagramme_arr", className="graphe")
-    Diagramme_tr = dcc.Graph(id= "graphe_diagramme_tr", className="graphe")
-    Diagramme_annees_dep = dcc.Graph(id="graphe_diagramme_annees_dep",className="graphe")
-    Diagramme_annees_arr = dcc.Graph(id="graphe_diagramme_annees_arr",className="graphe")
-    Diagramme_annees_tr = dcc.Graph(id="graphe_diagramme_annees_tr",className="graphe")
-    Diagramme_camembert = dcc.Graph(id= "graphe_diagramme_camembert", className="graphe")
+    diagramme_dep = dcc.Graph(id= "graphe_diagramme_dep", className="graphe")
+    diagramme_arr = dcc.Graph(id= "graphe_diagramme_arr", className="graphe")
+    diagramme_tr = dcc.Graph(id= "graphe_diagramme_tr", className="graphe")
+    diagramme_annees_dep = dcc.Graph(id="graphe_diagramme_annees_dep",className="graphe")
+    diagramme_annees_arr = dcc.Graph(id="graphe_diagramme_annees_arr",className="graphe")
+    diagramme_annees_tr = dcc.Graph(id="graphe_diagramme_annees_tr",className="graphe")
+    diagramme_camembert = dcc.Graph(id= "graphe_diagramme_camembert", className="graphe")
 
     # Disposition de l'application Dash
-    app_Dash.layout =  html.Div([
+    app_dash.layout =  html.Div([
     html.Link(rel="stylesheet", href="/static/css/diagramme.css"),
     header,
-    Dropdown_annees,
-    Dropdown_regions,
-    Diagramme_dep,
-    Diagramme_annees_dep,
-    Diagramme_arr,
-    Diagramme_annees_arr,
-    Diagramme_tr, 
-    Diagramme_annees_tr,
-    Diagramme_camembert
+    dropdown_annees,
+    dropdown_regions,
+    diagramme_dep,
+    diagramme_annees_dep,
+    diagramme_arr,
+    diagramme_annees_arr,
+    diagramme_tr,
+    diagramme_annees_tr,
+    diagramme_camembert
     ])
 
     # Callback pour mettre à jour les diagrammes en fonction des sélections
-    @app_Dash.callback(
+    @app_dash.callback(
          Output("graphe_diagramme_dep", "figure"),
          Output("graphe_diagramme_annees_dep", "figure"),
          Output("graphe_diagramme_arr", "figure"),
@@ -104,9 +104,7 @@ def creation_app_dash(srv_Flask):
     )
 
     def update_diagramme(annee, region):
-
         """ Met à jour les diagrammes en fonction de l'année et de la région sélectionnées
-    
         Arguments:
         annee -- année sélectionnée dans le Dropdown
         region -- région sélectionnée dans le Dropdown
@@ -119,7 +117,6 @@ def creation_app_dash(srv_Flask):
         fig_annees_arr -- figure du diagramme des passagers à l'arrivée entre 2018 et 2024
         fig_annees_tr -- figure du diagramme des passagers en transit entre 2018 et 2024
         fig_camembert -- figure du diagramme en camembert des 3 types de passagers
-        
         """
         url = f"http://127.0.0.1:5000/api/data?year={annee}&region={region}"
         resp = requests.get(url)

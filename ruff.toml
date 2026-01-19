@@ -1,5 +1,7 @@
 exclude = ["venv", "build", "dist"]
+line-length = 150
+fix = true
+
+[lint]
 select = ["E", "F", "W", "C", "N"]
 ignore = ["F401"]
-line-length = 100
-fix = true	  
