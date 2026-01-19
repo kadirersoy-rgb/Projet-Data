@@ -39,6 +39,19 @@ def nettoyage_fichier():
         for fichier in os.listdir(dossier):
             os.remove(os.path.join(dossier, fichier))
 
+
+def supprimer_inconnue():
+    """ Supprimer les regions inconnues du CSV
+    """
+    dossier = "data/clean"
+    fichiers = [os.path.join(dossier, f) for f in os.listdir(dossier) if f.endswith('.csv')]
+
+    for fichier in fichiers:
+        df = pd.read_csv(fichier, sep=";")
+        lignes_inconnues = df[df["REGION"] == "Inconnue"].index
+        df = df.drop(lignes_inconnues)
+        df.to_csv(fichier, sep=";", index=False)
+
 def initialiser_donnees():
     """ Télécharge les données puis les formatte et les mets dans le fichier clean
     """
@@ -46,3 +59,4 @@ def initialiser_donnees():
     get_data.charger_donnees()
     normaliser_an_mois()
     ajout_region()
+    supprimer_inconnue()
