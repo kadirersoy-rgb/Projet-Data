@@ -41,7 +41,12 @@ def creation_app_dash(srv_Flask):
                 href="/",
                 className="logo_lien"
             ),
-            html.H1("Carte Choroplèthe", className="titre_header_diagramme")
+            html.H1("Carte Choroplèthe", className="titre_header_diagramme"),
+            html.A(
+                href="/",
+                children=html.Button("Accueil", className="button_home"),
+                className="button_home_lien"
+            )
         ],
         className='header'
     )
@@ -175,7 +180,12 @@ def creation_app_dash(srv_Flask):
         )
 
         # Ajustements de la carte et du layout
-        fig_metro.update_geos(fitbounds="locations", visible=False)
+        fig_metro.update_geos(
+            projection_type="mercator", # Important pour ne pas déformer la carte
+            fitbounds="locations",
+            visible=False
+        )
+
         fig_metro.update_layout(
             dragmode=False, 
             margin={"r":0,"t":0,"l":0,"b":0},
