@@ -15,7 +15,7 @@ def api(srv_Flask):
     df_filtered_json - données JSON converties à partir du DataFrame filtré
     """
     # Chargement unique des données au démarrage
-    df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021"])
+    df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021", "2022", "2023", "2024"])
     df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4]
 
     # Définition de la route API
