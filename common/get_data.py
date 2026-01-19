@@ -21,7 +21,7 @@ def unzip_fichier():
 
     with zipfile.ZipFile("data/raw/data.zip", 'r') as zf:
         for nom in zf.namelist():
-            for annee in ["2018", "2019", "2020", "2021"]:
+            for annee in ["2018", "2019", "2020", "2021", "2022", "2023", "2024"]:
                 if annee in nom:
                     zf.extract(nom, "data/raw")
                     os.rename(f'data/raw/{nom}', f'data/raw/{annee}-data.csv')
