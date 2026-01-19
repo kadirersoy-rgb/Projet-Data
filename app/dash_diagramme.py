@@ -135,9 +135,9 @@ def creation_app_dash(srv_Flask):
         # Données entre 2018 et 2024 pour la région sélectionnée
         df_all_region = df_all[df_all["REGION"] == region]
         # Regrouper par ANNEE et sommer les passagers
-        df_4_annees_dep = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_dep"].sum()
-        df_4_annees_arr = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_arr"].sum()
-        df_4_annees_tr = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_tr"].sum()
+        df_annees_dep = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_dep"].sum()
+        df_annees_arr = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_arr"].sum()
+        df_annees_tr = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_tr"].sum()
 
         # Créer les figures des diagrammes
         fig_dep = px.bar(
@@ -149,7 +149,7 @@ def creation_app_dash(srv_Flask):
         )
 
         fig_annees_dep = px.bar(
-            df_4_annees_dep,
+            df_annees_dep,
             x="ANNEE",
             y="APT_PAX_dep",
             title=f"Passagers au départ par année - {region}",
@@ -165,7 +165,7 @@ def creation_app_dash(srv_Flask):
         )
 
         fig_annees_arr = px.bar(
-            df_4_annees_arr,
+            df_annees_arr,
             x="ANNEE",
             y="APT_PAX_arr",
             title=f"Passagers à l'arrivée par année - {region}",
@@ -181,7 +181,7 @@ def creation_app_dash(srv_Flask):
         )
 
         fig_annees_tr = px.bar(
-            df_4_annees_tr,
+            df_annees_tr,
             x="ANNEE",
             y="APT_PAX_tr",
             title=f"Passagers en transit par année - {region}",
@@ -222,6 +222,3 @@ def creation_app_dash(srv_Flask):
         )
 
         return fig_dep, fig_annees_dep, fig_arr, fig_annees_arr, fig_tr, fig_annees_tr, fig_camembert # Retourner les figures
-
-
-
