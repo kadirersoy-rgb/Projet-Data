@@ -1,6 +1,6 @@
 """
 Module pour créer une application Dash affichant des diagrammes comparatifs
-entre deux régions (totaux cumulés 2018–2024)
+entre deux régions
 """
 
 from dash import Dash, html, dcc, Input, Output
@@ -25,9 +25,8 @@ def creation_app_dash_comparaison(srv_flask):
         ["2018", "2019", "2020", "2021", "2022", "2023", "2024"]
     )
 
-    regions_disponibles = sorted(df_all["REGION"].unique())
+    regions_disponibles = sorted(df_all["REGION"].unique()) #trier les régions disponibles
 
-    # ====== HEADER ======
     header = html.Div(
         [
             html.A(
@@ -49,7 +48,7 @@ def creation_app_dash_comparaison(srv_flask):
         className='header'
     )
 
-    # ====== DROPDOWNS ======
+    # Dropdown pour sélectionner la première région
     dropdown_region_1 = html.Div(
         className="dropdown_regions",
         children=[
@@ -62,6 +61,7 @@ def creation_app_dash_comparaison(srv_flask):
         ]
     )
 
+    # Dropdown pour sélectionner la deuxième région
     dropdown_region_2 = html.Div(
         className="dropdown_regions",
         children=[
@@ -74,12 +74,12 @@ def creation_app_dash_comparaison(srv_flask):
         ]
     )
 
-    # ====== GRAPHIQUES ======
+    # Création des graphiques
     diagramme_dep = dcc.Graph(id="graphe_compare_dep", className="graphe")
     diagramme_arr = dcc.Graph(id="graphe_compare_arr", className="graphe")
     diagramme_tr = dcc.Graph(id="graphe_compare_tr", className="graphe")
 
-    # ====== LAYOUT ======
+    # Disposition de l'application Dash
     app_dash.layout = html.Div([
         html.Link(rel="stylesheet", href="/static/css/diagramme.css"),
         header,
@@ -90,7 +90,7 @@ def creation_app_dash_comparaison(srv_flask):
         diagramme_tr
     ])
 
-    # ====== CALLBACK ======
+    # Callbacks pour mettre à jour les diagrammes en fonction des régions sélectionnées
     @app_dash.callback(
         Output("graphe_compare_dep", "figure"),
         Output("graphe_compare_arr", "figure"),
@@ -105,10 +105,10 @@ def creation_app_dash_comparaison(srv_flask):
         def get_df_region(region):
             url = f"http://127.0.0.1:5000/api/data?region={region}"
             resp = requests.get(url)
-            data_json = resp.json()
-            df = pd.DataFrame(data_json)
+            data_json = resp.json() # Récupérer les données JSON de l'API
+            df = pd.DataFrame(data_json) # Convertir les données JSON en DataFrame pandas
 
-            df["ANNEE"] = df["ANMOIS"].astype(str).str[:4]
+            df["ANNEE"] = df["ANMOIS"].astype(str).str[:4] # Extraire l'année de la colonne ANMOIS
 
             # Groupes par année
             df_group = df.groupby("ANNEE", as_index=False).agg({
@@ -119,10 +119,9 @@ def creation_app_dash_comparaison(srv_flask):
 
             return df_group
 
-        df_r1 = get_df_region(region_1)
-        df_r2 = get_df_region(region_2)
+        df_r1 = get_df_region(region_1) # Données de la région 1
+        df_r2 = get_df_region(region_2) # Données de la région 2
 
-        # ====== FORMAT LONG POUR PLOTLY ======
         def build_long_df(col):
             df1 = df_r1[["ANNEE", col]].copy()
             df1["Région"] = region_1
@@ -134,11 +133,11 @@ def creation_app_dash_comparaison(srv_flask):
 
             return pd.concat([df1, df2], ignore_index=True)
 
-        df_dep = build_long_df("APT_PAX_dep")
-        df_arr = build_long_df("APT_PAX_arr")
-        df_tr = build_long_df("APT_PAX_tr")
+        df_dep = build_long_df("APT_PAX_dep")   # Données pour les passagers au départ
+        df_arr = build_long_df("APT_PAX_arr")   # Données pour les passagers à l'arrivée
+        df_tr = build_long_df("APT_PAX_tr")     # Données pour les passagers en transit
 
-        # ====== FIGURES ======
+        # Création des figures comparatives
         fig_dep = px.bar(
             df_dep,
             x="ANNEE",
