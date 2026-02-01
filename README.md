@@ -1,15 +1,16 @@
-## Sommaire
+## 📋 Sommaire
 
 - [A propos](#a-propos)
 - [Installation](#installation)
 - [Utilisation](#utilisation)
 - [Documentation](#documentation)
 
-## A propos
+## ℹ️ A propos
 
 Projet Multidisciplinaire de visualisation de données n°1.
+Récupération et comparaison des données d'aviation francaise durant la période de 2018 à 2024
 
-## Installation
+## 💾 Installation
 
 Utiliser la commande suivante pour télécharger les dépendances nécéssaires.
 Veuillez bien avoir installé [Python](https://www.python.org/downloads/) ainsi que [PiP](https://pip.pypa.io/en/stable/) au préalable
@@ -18,7 +19,7 @@ Veuillez bien avoir installé [Python](https://www.python.org/downloads/) ainsi 
 pip install -r requirements.txt
 ```
 
-## Utilisation
+## 🚀 Utilisation
 
 Pour lancer le projet il suffit d'éxécuter la commande suivante :  
 
@@ -26,9 +27,9 @@ Pour lancer le projet il suffit d'éxécuter la commande suivante :
 python main.py
 ```
 
-## Documentation
+## 📁 Documentation
 
-#### Arborescence du projet
+#### <u>Arborescence du projet</u>
 
 ```bash
 .
@@ -65,9 +66,15 @@ python main.py
         └── index.html
 ```
 
-#### Utilité des dossiers
+#### <u>Utilité des dossiers</u>
 
 **/common** : Utilitaires (récupération, nettoyage, traitement). \
 **/data** : Stockage des CSV (sous-dossiers `/raw` et `/clean`). \
 **/static** : Assets statiques pour le rendu web. \
 **/app** : Logique et interface de l'application Dash. \
+
+## 👥 Auteurs
+- Lucas Pokrywa
+- Kadir Ersoy
+- Valentin Hodonou
+- Étudiants à **ESIEE Paris**
