@@ -1,8 +1,7 @@
 import os
 import pandas as pd
-from typing import List
 
-def extraire_donnees(dataframes, donnees: List[str]) -> None:
+def extraire_donnees(dataframes, donnees) -> None:
     """ Extraire les données d'un Dataframe sous forme de tableau
 
     Arguments:
@@ -16,7 +15,7 @@ def extraire_donnees(dataframes, donnees: List[str]) -> None:
     return tableau
 
 
-def charger_les_data(annees: List[str]) -> None:
+def charger_les_data(annees) -> None:
     """Retourne un Dataframe de pandas des fichiers de data
 
     Arguments:
