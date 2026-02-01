@@ -23,27 +23,26 @@ pip install -r requirements.txt
 Pour lancer le projet il suffit d'éxécuter la commande suivante :  
 
 ```bash
-python3 main.py
+python main.py
 ```
 
 ## Documentation
 
-Arborescence du projet
+#### Arborescence du projet
 
 ```bash
 .
 ├── app
+│   ├── dash_compare.py
 │   ├── dash_diagramme.py
 │   └── dash_map.py
 ├── common
 │   ├── api.py
 │   ├── clean_data.py
-│   ├── compare.py
 │   ├── get_data.py
-│   ├── map.py
+│   ├── regions.geojson
 │   ├── scrapper.py
 │   ├── server.py
-│   ├── temporaire.py
 │   └── use_data.py
 ├── data
 │   ├── clean
@@ -51,12 +50,11 @@ Arborescence du projet
 │   └── raw
 │       └── 20**-data.csv
 ├── data_info.png
-├── linter.sh
+├── README.md
 ├── main.py
-├── README
 ├── region.json
 ├── requirements.txt
-├── start.sh
+├── ruff.toml
 └── static
     ├── css
     │   ├── diagramme.css
@@ -67,7 +65,9 @@ Arborescence du projet
         └── index.html
 ```
 
-common -> Fonctions utiles au programme \
-data   -> Données en fichier CSV \
-static -> Fichier statiques pour le site \
-app    -> Fonctions pour dash 
+#### Utilité des dossiers
+
+**/common** : Utilitaires (récupération, nettoyage, traitement). \
+**/data** : Stockage des CSV (sous-dossiers `/raw` et `/clean`). \
+**/static** : Assets statiques pour le rendu web. \
+**/app** : Logique et interface de l'application Dash. \

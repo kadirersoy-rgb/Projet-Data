@@ -8,6 +8,9 @@ def extraire_donnees(dataframes, donnees: List[str]) -> None:
     Arguments:
     dataframes -- un dataframe pandas
     donnees -- tableau des entetes de données voulue ex : ["ANMOIS","APT"]
+
+    Return:
+    tableau: jeu de données avec les colonnes voulues
     """
     tableau = dataframes[donnees].values.tolist()
     return tableau
@@ -18,6 +21,9 @@ def charger_les_data(annees: List[str]) -> None:
 
     Arguments:
     annees -- Liste des années voulues de 2018-2021 ex: ["2018","2021"]
+
+    Return:
+    df: joint les différents jeu de données avec les differentes années voulues
     """
     projet_folder_data= os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data/clean")
     fichiers={}

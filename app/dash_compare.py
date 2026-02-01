@@ -25,7 +25,7 @@ def creation_app_dash_comparaison(srv_flask):
         ["2018", "2019", "2020", "2021", "2022", "2023", "2024"]
     )
 
-    regions_disponibles = sorted(df_all["REGION"].unique()) #trier les régions disponibles
+    regions_disponibles = sorted(df_all["REGION"].unique())
 
     header = html.Div(
         [
@@ -105,12 +105,11 @@ def creation_app_dash_comparaison(srv_flask):
         def get_df_region(region):
             url = f"http://127.0.0.1:5000/api/data?region={region}"
             resp = requests.get(url)
-            data_json = resp.json() # Récupérer les données JSON de l'API
-            df = pd.DataFrame(data_json) # Convertir les données JSON en DataFrame pandas
+            data_json = resp.json()
+            df = pd.DataFrame(data_json)
 
-            df["ANNEE"] = df["ANMOIS"].astype(str).str[:4] # Extraire l'année de la colonne ANMOIS
+            df["ANNEE"] = df["ANMOIS"].astype(str).str[:4]
 
-            # Groupes par année
             df_group = df.groupby("ANNEE", as_index=False).agg({
                 "APT_PAX_dep": "sum",
                 "APT_PAX_arr": "sum",
@@ -119,8 +118,8 @@ def creation_app_dash_comparaison(srv_flask):
 
             return df_group
 
-        df_r1 = get_df_region(region_1) # Données de la région 1
-        df_r2 = get_df_region(region_2) # Données de la région 2
+        df_r1 = get_df_region(region_1)
+        df_r2 = get_df_region(region_2)
 
         def build_long_df(col):
             df1 = df_r1[["ANNEE", col]].copy()
@@ -133,11 +132,10 @@ def creation_app_dash_comparaison(srv_flask):
 
             return pd.concat([df1, df2], ignore_index=True)
 
-        df_dep = build_long_df("APT_PAX_dep")   # Données pour les passagers au départ
-        df_arr = build_long_df("APT_PAX_arr")   # Données pour les passagers à l'arrivée
-        df_tr = build_long_df("APT_PAX_tr")     # Données pour les passagers en transit
+        df_dep = build_long_df("APT_PAX_dep")
+        df_arr = build_long_df("APT_PAX_arr")
+        df_tr = build_long_df("APT_PAX_tr")
 
-        # Création des figures comparatives
         fig_dep = px.bar(
             df_dep,
             x="ANNEE",
@@ -167,7 +165,6 @@ def creation_app_dash_comparaison(srv_flask):
             title="Passagers en transit par année (Région 1 vs Région 2)",
             labels={"ANNEE": "Année"}
         )
-
         return fig_dep, fig_arr, fig_tr
 
     return app_dash

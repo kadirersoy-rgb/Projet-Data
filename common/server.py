@@ -13,12 +13,10 @@ def creation_serveur():
     projet_folder_static = os.path.join(projet_folder_base, "static")
     projet_folder_templates = os.path.join(projet_folder_static, "templates")
 
-    # Création du serveur Flask avec les dossiers templates et static configurés
     srv_flask = Flask(__name__, template_folder=projet_folder_templates, static_folder=projet_folder_static)
 
-    # Définir la route pour la page d'accueil
     @srv_flask.route('/')
     def index():
         return render_template('index.html')
 
-    return srv_flask #retourner le serveur Flask configuré
+    return srv_flask

@@ -19,10 +19,10 @@ def creation_app_dash(srv_flask):
     app_dash = Dash(__name__, server=srv_flask, routes_pathname_prefix="/diagramme/", suppress_callback_exceptions=True)
 
     df_all = use_data.charger_les_data(["2018", "2019", "2020", "2021", "2022", "2023", "2024"])
-    df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4] #extraire l'année de la colonne ANMOIS
+    df_all["ANNEE"] = df_all["ANMOIS"].astype(str).str[:4]
 
-    annees_disponibles = sorted(df_all["ANNEE"].unique()) #trier les années disponibles
-    regions_disponibles = sorted(df_all["REGION"].unique()) #trier les régions disponibles
+    annees_disponibles = sorted(df_all["ANNEE"].unique())
+    regions_disponibles = sorted(df_all["REGION"].unique())
 
     header = html.Div(
         [
@@ -46,7 +46,7 @@ def creation_app_dash(srv_flask):
         className = 'header'
     )
 
-    dropdown_annees = html.Div(className="dropdown_annees", #Dropdown pour sélectionner l'année
+    dropdown_annees = html.Div(className="dropdown_annees",
         children = [
         html.Label("Sélectionner une année:"),
         dcc.Dropdown(
@@ -56,7 +56,7 @@ def creation_app_dash(srv_flask):
             )
     ])
 
-    dropdown_regions = html.Div(className="dropdown_regions", #Dropdown pour sélectionner la région
+    dropdown_regions = html.Div(className="dropdown_regions",
         children = [
         html.Label("Sélectionner une région:"),
         dcc.Dropdown(
@@ -66,7 +66,6 @@ def creation_app_dash(srv_flask):
             )
     ])
 
-    # Création des graphiques
     diagramme_dep = dcc.Graph(id= "graphe_diagramme_dep", className="graphe")
     diagramme_arr = dcc.Graph(id= "graphe_diagramme_arr", className="graphe")
     diagramme_tr = dcc.Graph(id= "graphe_diagramme_tr", className="graphe")
@@ -75,22 +74,20 @@ def creation_app_dash(srv_flask):
     diagramme_annees_tr = dcc.Graph(id="graphe_diagramme_annees_tr",className="graphe")
     diagramme_camembert = dcc.Graph(id= "graphe_diagramme_camembert", className="graphe")
 
-    # Disposition de l'application Dash
     app_dash.layout =  html.Div([
     html.Link(rel="stylesheet", href="/static/css/diagramme.css"),
-    header,
-    dropdown_annees,
-    dropdown_regions,
-    diagramme_dep,
-    diagramme_annees_dep,
-    diagramme_arr,
-    diagramme_annees_arr,
-    diagramme_tr,
-    diagramme_annees_tr,
-    diagramme_camembert
+        header,
+        dropdown_annees,
+        dropdown_regions,
+        diagramme_dep,
+        diagramme_annees_dep,
+        diagramme_arr,
+        diagramme_annees_arr,
+        diagramme_tr,
+        diagramme_annees_tr,
+        diagramme_camembert
     ])
 
-    # Callback pour mettre à jour les diagrammes en fonction des sélections
     @app_dash.callback(
          Output("graphe_diagramme_dep", "figure"),
          Output("graphe_diagramme_annees_dep", "figure"),
@@ -120,23 +117,21 @@ def creation_app_dash(srv_flask):
         """
         url = f"http://127.0.0.1:5000/api/data?year={annee}&region={region}"
         resp = requests.get(url)
-        data_json = resp.json() #récupérer les données JSON de l'API
-        df = pd.DataFrame(data_json) #convertir les données JSON en DataFrame pandas
-        df["DATE"] = pd.to_datetime(df["ANMOIS"].astype(str), format="%Y%m") #convertir ANMOIS en format date
+        data_json = resp.json()
+        df = pd.DataFrame(data_json)
+        df["DATE"] = pd.to_datetime(df["ANMOIS"].astype(str), format="%Y%m")
 
-        # Regrouper les données par DATE et sommer les passagers pour chaque mois
         df_groupe_depart = (df.groupby("DATE", as_index=False)["APT_PAX_dep"].sum())
         df_groupe_arrivee = (df.groupby("DATE", as_index=False)["APT_PAX_arr"].sum())
         df_groupe_transit = (df.groupby("DATE", as_index=False)["APT_PAX_tr"].sum())
 
-        # Données entre 2018 et 2024 pour la région sélectionnée
         df_all_region = df_all[df_all["REGION"] == region]
-        # Regrouper par ANNEE et sommer les passagers
+
         df_annees_dep = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_dep"].sum()
         df_annees_arr = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_arr"].sum()
         df_annees_tr = df_all_region.groupby("ANNEE", as_index=False)["APT_PAX_tr"].sum()
 
-        # Créer les figures des diagrammes
+
         fig_dep = px.bar(
             df_groupe_depart,
             x="DATE",
@@ -218,4 +213,4 @@ def creation_app_dash(srv_flask):
             title=f"Répartition des passagers - {region} en ({annee})"
         )
 
-        return fig_dep, fig_annees_dep, fig_arr, fig_annees_arr, fig_tr, fig_annees_tr, fig_camembert # Retourner les figures
+        return fig_dep, fig_annees_dep, fig_arr, fig_annees_arr, fig_tr, fig_annees_tr, fig_camembert
