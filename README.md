@@ -7,6 +7,25 @@ Le projet permet d'explorer et de comparer les données de l'aviation française
 
 L'objectif est de transformer des données brutes en informations exploitables afin de faciliter leur analyse et leur interprétation.
 
+<h2>📸 Aperçu de l'application</h2>
+
+<div align="center">
+  <h3>🗺️ Visualisation géographique</h3>
+  <img src="docs/screenshots/Carte.png" width="85%" alt="Carte interactive des données aéronautiques françaises">
+
+  <h3>📊 Analyse et comparaison des données</h3>
+  <table>
+    <tr>
+      <td width="50%">
+        <img src="docs/screenshots/Diagramme1.png" width="100%" alt="Premier diagramme d'analyse">
+      </td>
+      <td width="50%">
+        <img src="docs/screenshots/Diagramme2.png" width="100%" alt="Deuxième diagramme d'analyse">
+      </td>
+    </tr>
+  </table>
+</div>
+
 ## ✨ Fonctionnalités
 
 ### 📊 Analyse et visualisation
