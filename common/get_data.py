@@ -10,8 +10,9 @@ def telecharger_fichier():
     """ Téléchargement d'un fichier avec un url donné
     """
 
-    #url = "https://www.data.gouv.fr/api/1/datasets/r/ad91ede7-3eb9-41fe-8a00-0324210bfa59"
-    r = requests.get(get_zip_link())
+    r = requests.get(get_zip_link(), timeout=120)
+    r.raise_for_status()
+    os.makedirs("data/raw", exist_ok=True)
     with open("data/raw/data.zip", "wb") as f:
         f.write(r.content)
 

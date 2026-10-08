@@ -3,7 +3,6 @@ Module pour créer une application Dash affichant des diagrammes basés sur les 
 '''
 
 from dash import Dash, html, dcc, Input, Output
-import requests
 import plotly.express as px
 import pandas as pd
 from common import use_data
@@ -52,7 +51,8 @@ def creation_app_dash(srv_flask):
         dcc.Dropdown(
             id="annee_dropdown",
             options=[{"label":str(annee), "value": annee} for annee in annees_disponibles],
-            value=annees_disponibles[0]
+            value=annees_disponibles[0],
+            clearable=False
             )
     ])
 
@@ -62,7 +62,8 @@ def creation_app_dash(srv_flask):
         dcc.Dropdown(
             id="region_dropdown",
             options=[{"label":str(region), "value": region} for region in regions_disponibles],
-            value=regions_disponibles[0]
+            value=regions_disponibles[0],
+            clearable=False
             )
     ])
 
@@ -115,11 +116,10 @@ def creation_app_dash(srv_flask):
         fig_annees_tr -- figure du diagramme des passagers en transit entre 2018 et 2024
         fig_camembert -- figure du diagramme en camembert des 3 types de passagers
         """
-        url = f"http://127.0.0.1:5000/api/data?year={annee}&region={region}"
-        resp = requests.get(url)
-        data_json = resp.json()
-        df = pd.DataFrame(data_json)
-        df["DATE"] = pd.to_datetime(df["ANMOIS"].astype(str), format="%Y%m")
+        df = df_all[
+            (df_all["ANNEE"] == str(annee)) & (df_all["REGION"] == region)
+        ].copy()
+        df["DATE"] = pd.to_datetime(df["ANMOIS"].astype(str), format="%Y-%m")
 
         df_groupe_depart = (df.groupby("DATE", as_index=False)["APT_PAX_dep"].sum())
         df_groupe_arrivee = (df.groupby("DATE", as_index=False)["APT_PAX_arr"].sum())
@@ -212,5 +212,12 @@ def creation_app_dash(srv_flask):
             },
             title=f"Répartition des passagers - {region} en ({annee})"
         )
+
+        if df.empty:
+            for figure in (fig_dep, fig_arr, fig_tr, fig_camembert):
+                figure.add_annotation(
+                    text="Aucune donnée pour cette année et cette région.",
+                    x=0.5, y=0.5, xref="paper", yref="paper", showarrow=False
+                )
 
         return fig_dep, fig_annees_dep, fig_arr, fig_annees_arr, fig_tr, fig_annees_tr, fig_camembert

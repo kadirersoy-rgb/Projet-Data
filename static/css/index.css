@@ -4,6 +4,9 @@
 
 body {
     margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .header {
@@ -13,6 +16,7 @@ body {
     position: relative;
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .header .logo {
@@ -30,10 +34,11 @@ body {
 
 .home {
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding-top: 60px;
+    padding: 60px 20px 40px;
 }
 
 .home .titre_home {
@@ -104,11 +109,9 @@ body {
 }
 
 .participants {
-    position: fixed;
     font-size: 1.5rem;
     color: #fff;
-    bottom: 0;
-    width: 100%;
+    flex-shrink: 0;
     padding: 20px;
 
     background-color: rgb(6, 131, 185);

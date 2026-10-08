@@ -14,7 +14,7 @@ def normaliser_an_mois():
     for fichier in fichiers:
         df = pd.read_csv(fichier, sep=";")
         df['ANMOIS'] = df['ANMOIS'].apply(lambda x: str(x)[:4]+ "-" + str(x)[4:])
-        df.to_csv(f'data/clean/{fichier.split("/")[2]}', sep=";", index=False)
+        df.to_csv(fichier, sep=";", index=False)
 
 def ajout_region():
     """ Ajout d'une région pour les aéroport dans le json
@@ -36,6 +36,7 @@ def nettoyage_fichier():
     """
     dossiers = ["data/raw", "data/clean"]
     for dossier in dossiers:
+        os.makedirs(dossier, exist_ok=True)
         for fichier in os.listdir(dossier):
             os.remove(os.path.join(dossier, fichier))
 
@@ -57,6 +58,6 @@ def initialiser_donnees():
     """
     nettoyage_fichier()
     get_data.charger_donnees()
-    normaliser_an_mois()
     ajout_region()
+    normaliser_an_mois()
     supprimer_inconnue()
