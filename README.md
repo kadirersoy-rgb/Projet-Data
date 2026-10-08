@@ -1,43 +1,128 @@
-## 📋 Sommaire
 
-- [A propos](#a-propos)
-- [Installation](#installation)
-- [Utilisation](#utilisation)
-- [Documentation](#documentation)
+# ✈️ French Aviation Data — Analytics & Visualization
 
-## ℹ️ A propos
+Application de **collecte, traitement et visualisation de données aéronautiques françaises**, développée en **Python** dans le cadre d'un projet multidisciplinaire à **ESIEE Paris**.
 
-Projet Multidisciplinaire de visualisation de données n°1.
-Récupération et comparaison des données d'aviation francaise durant la période de 2018 à 2024
+Le projet permet d'explorer et de comparer les données de l'aviation française entre **2018 et 2024**, à travers une interface web proposant des visualisations interactives, des diagrammes comparatifs et des représentations géographiques.
 
-## 💾 Installation
+L'objectif est de transformer des données brutes en informations exploitables afin de faciliter leur analyse et leur interprétation.
 
-Utiliser la commande suivante pour télécharger les dépendances nécéssaires.
-Veuillez bien avoir installé [Python](https://www.python.org/downloads/) ainsi que [PiP](https://pip.pypa.io/en/stable/) au préalable
+## ✨ Fonctionnalités
+
+### 📊 Analyse et visualisation
+
+- Exploration des données aéronautiques françaises de 2018 à 2024.
+- Comparaison des données à travers différentes visualisations.
+- Affichage de diagrammes pour faciliter l'analyse.
+- Représentation géographique des données sur une carte.
+- Interface web dédiée à la consultation des résultats.
+
+### 🔄 Collecte et traitement des données
+
+- Récupération de données depuis des sources externes.
+- Scripts de collecte et de scraping.
+- Nettoyage et préparation des données.
+- Organisation des données brutes et nettoyées.
+- Exploitation de fichiers CSV pour les visualisations.
+
+### 🌐 Application web
+
+- Interface interactive développée avec Python et Dash.
+- Organisation des fonctionnalités en plusieurs modules.
+- Intégration de ressources HTML et CSS.
+- Séparation entre la collecte, le traitement et la visualisation des données.
+
+## 🛠️ Technologies
+
+| Technologie | Utilisation |
+|---|---|
+| Python | Développement et traitement des données |
+| Dash | Création de tableaux de bord interactifs |
+| HTML / CSS | Personnalisation de l'interface web |
+| CSV | Stockage des données brutes et nettoyées |
+| GeoJSON | Représentation des données géographiques |
+| Git / GitHub | Versionnement et collaboration |
+
+Les bibliothèques Python utilisées sont répertoriées dans `requirements.txt`.
+
+## 🧠 Architecture du projet
+
+Le projet repose sur une architecture modulaire permettant de séparer les différentes étapes du traitement des données.
+
+```text
+        Sources de données
+                |
+                v
+       Collecte / Scraping
+                |
+                v
+         Données brutes
+          (data/raw)
+                |
+                v
+      Nettoyage et traitement
+                |
+                v
+        Données préparées
+         (data/clean)
+                |
+                v
+        Application Dash
+                |
+       +--------+--------+
+       |        |        |
+       v        v        v
+ Comparaison  Cartes  Diagrammes
+```
+
+Cette organisation facilite la maintenance du projet et permet de distinguer les traitements de données des composants de visualisation.
+
+## 🚀 Installation
+
+### Prérequis
+
+- Python
+- pip
+- Git (facultatif)
+
+### 1. Cloner le repository
+
+```bash
+git clone URL_DU_REPOSITORY
+```
+
+Se placer dans le dossier du projet :
+
+```bash
+cd NOM_DU_REPOSITORY
+```
+
+### 2. Installer les dépendances
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 🚀 Utilisation
+## ▶️ Utilisation
 
-Pour lancer le projet il suffit d'éxécuter la commande suivante :  
+Pour démarrer l'application :
 
 ```bash
 python main.py
 ```
 
-## 📁 Documentation
+Consulter les informations affichées dans le terminal pour accéder à l'interface web.
 
-#### <u>Arborescence du projet</u>
+## 📂 Structure du projet
 
-```bash
+```text
 .
-├── app
+├── app/
 │   ├── dash_compare.py
 │   ├── dash_diagramme.py
 │   └── dash_map.py
-├── common
+│
+├── common/
 │   ├── api.py
 │   ├── clean_data.py
 │   ├── get_data.py
@@ -45,36 +130,67 @@ python main.py
 │   ├── scrapper.py
 │   ├── server.py
 │   └── use_data.py
-├── data
-│   ├── clean
+│
+├── data/
+│   ├── clean/
 │   │   └── 20**-data.csv
-│   └── raw
+│   └── raw/
 │       └── 20**-data.csv
+│
+├── static/
+│   ├── css/
+│   │   ├── diagramme.css
+│   │   └── index.css
+│   ├── images/
+│   │   └── ESIEE_Paris_logo.png
+│   └── templates/
+│       └── index.html
+│
 ├── data_info.png
-├── README.md
-├── main.py
 ├── region.json
+├── main.py
 ├── requirements.txt
 ├── ruff.toml
-└── static
-    ├── css
-    │   ├── diagramme.css
-    │   └── index.css
-    ├── images
-    │   └── ESIEE_Paris_logo.png
-    └── templates
-        └── index.html
+└── README.md
 ```
 
-#### <u>Utilité des dossiers</u>
+## 🔍 Organisation des modules
 
-**/common** : Utilitaires (récupération, nettoyage, traitement). \
-**/data** : Stockage des CSV (sous-dossiers `/raw` et `/clean`). \
-**/static** : Assets statiques pour le rendu web. \
-**/app** : Logique et interface de l'application Dash. \
+### `app/` — Visualisation
 
-## 👥 Auteurs
-- Lucas Pokrywa
-- Kadir Ersoy
-- Valentin Hodonou
-- Étudiants à **ESIEE Paris**
+Regroupe les composants de l'application :
+
+- `dash_compare.py` : comparaison des données.
+- `dash_diagramme.py` : affichage des diagrammes.
+- `dash_map.py` : représentation cartographique.
+
+### `common/` — Traitement des données
+
+Contient les scripts nécessaires à la récupération, au nettoyage et à l'exploitation des données.
+
+### `data/` — Stockage
+
+Organise les données CSV en deux catégories :
+
+- `raw/` : données brutes.
+- `clean/` : données nettoyées et préparées.
+
+### `static/` — Interface web
+
+Contient les feuilles de style CSS, les images et les templates HTML utilisés par l'application.
+
+## 👥 Équipe
+
+Projet réalisé par :
+
+- **Kadir Ersoy**
+- **Lucas Pokrywa**
+- **Valentin Hodonou**
+
+## 🎓 Contexte académique
+
+Projet multidisciplinaire de visualisation de données n°1, réalisé à **ESIEE Paris**.
+
+Ce projet nous a permis de mettre en pratique plusieurs étapes du traitement des données : récupération, nettoyage, structuration, analyse et représentation graphique.
+
+Il a également renforcé nos compétences en développement Python, en conception d'interfaces interactives et en travail collaboratif.
